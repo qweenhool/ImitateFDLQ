@@ -12,9 +12,5 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        //Todo 搜索界面
-        if(true){
-            
-        }
     }
 }
