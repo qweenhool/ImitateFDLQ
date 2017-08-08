@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#5287E7">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="首页"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#5287E7" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#5287E7"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:background="#00000000"
+            android:drawableTop="@drawable/selector_uncollected"
+            android:gravity="center"
+            android:text="未收账单"
+            android:textColor="@drawable/selector_textcolor"
+            android:textSize="13sp" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:drawableTop="@drawable/selector_unpayed"
+            android:gravity="center"
+            android:text="未付账单"
+            android:textColor="@drawable/selector_textcolor"
+            android:textSize="13sp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#00000000"
+            android:drawableTop="@drawable/selector_payed"
+            android:gravity="center"
+            android:text="到账账单"
+            android:textColor="@drawable/selector_textcolor"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/ad" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#ffffff"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_income_number"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0.00" />
+
+            <TextView
+                android:id="@+id/tv_income_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="本月收入" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_expenditure_number"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0.00" />
+
+            <TextView
+                android:id="@+id/tv_expenditure_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="本月支出" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_surplus_number"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0.00" />
+
+            <TextView
+                android:id="@+id/tv_surplus_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="本月结余" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp">
+
+        <com.ydl.imitatefdlq.customView.RefreshableView
+            android:id="@+id/refreshable_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#efeff4"
+                android:dividerHeight="7dp"/>
+        </com.ydl.imitatefdlq.customView.RefreshableView>
+
+    </RelativeLayout>
+
+</LinearLayout>
+
