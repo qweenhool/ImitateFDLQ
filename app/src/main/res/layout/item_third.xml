@@ -12,12 +12,13 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_idle_room"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
             android:background="@drawable/selector_ll_textcolor"
-            android:clickable="true">
+            android:clickable="true"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -50,21 +51,22 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_reminder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:background="@drawable/selector_ll_textcolor"
-            android:clickable="true">
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:drawableLeft="@drawable/ic_alarm"
-                android:text="备忘提醒"
                 android:drawablePadding="10dp"
+                android:text="备忘提醒"
                 android:textColor="#000000"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -77,12 +79,13 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_water_meter"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
             android:background="@drawable/selector_ll_textcolor"
-            android:clickable="true">
+            android:clickable="true"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -116,21 +119,22 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_send_notice"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:background="@drawable/selector_ll_textcolor"
-            android:clickable="true">
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:drawableLeft="@drawable/ic_textsms"
-                android:text="通知群发"
                 android:drawablePadding="10dp"
+                android:text="通知群发"
                 android:textColor="#000000"
                 android:textSize="18sp" />
 

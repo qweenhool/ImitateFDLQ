@@ -6,6 +6,7 @@
     android:background="#ffffff">
 
     <LinearLayout
+        android:id="@+id/ll_bill"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_weight="1"
@@ -14,7 +15,6 @@
         android:clickable="true">
 
         <ImageView
-            android:id="@+id/image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -52,17 +52,18 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_should_collect"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:background="@drawable/selector_ll_textcolor"
             android:clickable="true">
 
             <TextView
-                android:layout_marginRight="17dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
                 android:drawableLeft="@drawable/ic_renter"
                 android:drawablePadding="15dp"
                 android:gravity="center"
@@ -72,18 +73,18 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_account_payable"
+            android:id="@+id/ll_should_pay"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:background="@drawable/selector_ll_textcolor"
             android:clickable="true">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="17dp"
+                android:layout_marginLeft="15dp"
                 android:drawableLeft="@drawable/ic_money"
                 android:drawablePadding="15dp"
                 android:gravity="center"

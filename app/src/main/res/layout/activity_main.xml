@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context="com.ydl.imitatefdlq.MainActivity">
 
-    <android.support.v4.view.ViewPager
+    <com.ydl.imitatefdlq.customView.NoScrollViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -16,21 +16,21 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="#ffffff" />
+        android:layout_height="1dp"
+        android:background="#d9d9d9" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="55dp"
         app:tabBackground="@android:color/white"
         app:tabIndicatorHeight="0dp"
         app:tabMode="fixed"
         app:tabSelectedTextColor="#5687E7"
         app:tabTextColor="#A7A7A7" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="#ffffff" />
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="5dp"-->
+        <!--android:background="#ffffff" />-->
 </LinearLayout>

@@ -15,7 +15,6 @@
         android:clickable="true">
 
         <ImageView
-            android:id="@+id/image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -37,6 +36,7 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/tv_upcoming"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -56,25 +56,27 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
             android:background="@drawable/selector_ll_textcolor"
-            android:clickable="true">
+            android:clickable="true"
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_renter"
                 android:drawablePadding="15dp"
+                android:layout_marginLeft="15dp"
                 android:gravity="center"
-                android:text="租客   "
+                android:text="租客"
                 android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/tv_renter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
                 android:text="0人"
-                android:textColor="#95969f"/>
+                android:textColor="#95969f" />
         </LinearLayout>
 
         <LinearLayout
@@ -82,25 +84,27 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
             android:background="@drawable/selector_ll_textcolor"
-            android:clickable="true">
+            android:clickable="true"
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_owner"
                 android:drawablePadding="15dp"
+                android:layout_marginLeft="15dp"
                 android:gravity="center"
-                android:text="业主   "
+                android:text="业主"
                 android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/tv_owner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
                 android:text="0人"
-                android:textColor="#95969f"/>
+                android:textColor="#95969f" />
         </LinearLayout>
 
     </LinearLayout>

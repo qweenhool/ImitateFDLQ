@@ -3,15 +3,15 @@ package com.ydl.imitatefdlq;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.githang.statusbar.StatusBarCompat;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
+import com.ydl.imitatefdlq.customView.NoScrollViewPager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ViewPager mViewPager;
+    private NoScrollViewPager mViewPager;
     private TabLayout mTabLayout;
     private TabAdapter mTabAdapter;
     private String[] mTabName;
@@ -25,15 +25,14 @@ public class MainActivity extends AppCompatActivity {
         StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this,R.color.colorStatusbar), false);
         initView();
 
-
     }
 
     private void initView() {
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mViewPager = (NoScrollViewPager) findViewById(R.id.view_pager);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
         //底部栏名称
-        mTabName = new String[]{"东", "南", "西", "北"};
+        mTabName = new String[]{"首页", "房产", "房东汇", "我"};
         mTabAdapter = new TabAdapter(getSupportFragmentManager(),mTabName);
         //给ViewPager设置适配器
         mViewPager.setAdapter(mTabAdapter);

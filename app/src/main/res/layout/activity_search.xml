@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:text="搜索界面"
-    android:textSize="30sp"
-    tools:context="com.ydl.imitatefdlq.activity.SearchActivity">
+    android:layout_height="50dp"
+    android:background="#5887e7"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
-</TextView>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:background="@drawable/rectangle_with_corner"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/ic_search_small" />
+
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="房产/房号/租客/业主/手机号/账单"
+            android:textColorHint="#babcc6"
+            android:textSize="13sp"
+            android:maxLength="15"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:text="取消"
+        android:textColor="#ffffff" />
+</LinearLayout>

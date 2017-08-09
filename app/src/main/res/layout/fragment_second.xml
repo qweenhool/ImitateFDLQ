@@ -1,12 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#ffffff">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="第二个页面"
-        android:textSize="20sp"
-        android:layout_gravity="center"/>
-</FrameLayout>
+        android:background="#5287E7">
+
+        <TextView
+            android:id="@+id/tv_toolbar_name"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+    </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:id="@+id/iv_bg"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_below="@id/toolbar"
+        android:background="@drawable/bg" />
+
+    <LinearLayout
+        android:id="@+id/tv_add_room"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
+        android:layout_below="@id/iv_bg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rectangle_with_corner_and_stroke"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_add_circle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="添加房产"
+            android:textColor="#5687e7" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

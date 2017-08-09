@@ -25,10 +25,14 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:25.3.1'
     compile 'com.githang:status-bar-compat:latest.integration'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'cn.bingoogolapple:bga-refreshlayout:1.1.0@aar'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.jakewharton:butterknife:8.8.0'
     testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.0'
 }
