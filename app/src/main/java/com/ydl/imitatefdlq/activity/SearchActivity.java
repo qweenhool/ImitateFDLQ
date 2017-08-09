@@ -12,6 +12,5 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        //Todo 搜索微信搜索栏的实现方式 2017/8/9
     }
 }
