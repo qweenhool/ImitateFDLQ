@@ -13,7 +13,8 @@
         android:layout_margin="10dp"
         android:layout_weight="1"
         android:background="@drawable/rectangle_with_corner"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -23,12 +24,21 @@
 
         <EditText
             android:id="@+id/et_search"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_weight="1"
             android:hint="房产/房号/租客/业主/手机号/账单"
             android:textColorHint="#babcc6"
             android:textSize="13sp"
-            android:maxLength="15"/>
+            android:maxLength="15" />
+
+        <ImageView
+            android:id="@+id/iv_clear"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_clear"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <TextView
@@ -36,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="16dp"
         android:text="取消"
         android:textColor="#ffffff" />
 </LinearLayout>

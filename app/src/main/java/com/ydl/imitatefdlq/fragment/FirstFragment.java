@@ -102,7 +102,7 @@ public class FirstFragment extends Fragment implements BGARefreshLayout.BGARefre
         //这句不添加home按钮点击无效
         setHasOptionsMenu(true);
 
-        toolbar = (Toolbar) view.findViewById(R.id.first_toolbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_search);
         activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);

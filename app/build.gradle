@@ -35,4 +35,5 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.0'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.0'
+    compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 }

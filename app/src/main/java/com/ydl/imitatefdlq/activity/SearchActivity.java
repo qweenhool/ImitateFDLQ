@@ -5,14 +5,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.utils.EditTextUtils;
 
 public class SearchActivity extends AppCompatActivity {
 
     private EditText search;
     private TextView cancel;
+    private ImageView clear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,12 +24,10 @@ public class SearchActivity extends AppCompatActivity {
 
         iniView();
 
-
-
-
     }
 
     private void iniView() {
+        clear = (ImageView) findViewById(R.id.iv_clear);
         search = (EditText) findViewById(R.id.et_search);
         //设置搜索框自动获得焦点并弹出软键盘
         search.setFocusable(true);
@@ -41,5 +42,7 @@ public class SearchActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        EditTextUtils.clearButtonListener(search,clear);
     }
 }
