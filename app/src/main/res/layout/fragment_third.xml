@@ -1,32 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tl="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#5287E7">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.flyco.tablayout.CommonTabLayout
-            android:id="@+id/tl_news"
-            android:layout_width="200dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            tl:tl_iconVisible="false"
-            tl:tl_indicator_corner_radius="1.5dp"
-            tl:tl_indicator_height="3dp"
-            tl:tl_indicator_width="10dp"
-            tl:tl_textsize="14sp"/>
-    </android.support.v7.widget.Toolbar>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="#5287E7">
 
-    <FrameLayout
-        android:id="@+id/fl_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            <com.flyco.tablayout.SlidingTabLayout
+                android:id="@+id/stl_fragment3"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginBottom="1dp"
+                app:tl_indicator_corner_radius="1.5dp"
+                app:tl_indicator_height="3dp"
+                app:tl_indicator_width="20dp"
+                app:tl_tab_space_equal="true"
+                app:tl_textSelectColor="#ffffff"
+                app:tl_textUnselectColor="#aac3f3"
+                app:tl_textsize="18sp" />
+        </android.support.v7.widget.Toolbar>
 
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_fragment3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="15dp"
+        />
+
+</RelativeLayout>

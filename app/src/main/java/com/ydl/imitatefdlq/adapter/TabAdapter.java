@@ -4,10 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.ydl.imitatefdlq.fragment.FirstFragment;
-import com.ydl.imitatefdlq.fragment.FourthFragment;
-import com.ydl.imitatefdlq.fragment.SecondFragment;
-import com.ydl.imitatefdlq.fragment.ThirdFragment;
+import java.util.List;
 
 /**
  * Created by qweenhool on 2017/8/5.
@@ -16,26 +13,19 @@ import com.ydl.imitatefdlq.fragment.ThirdFragment;
 public class TabAdapter extends FragmentPagerAdapter {
 
 
-    private final String[] mTabName;
+    private String[] mTabName;
+    private List<Fragment> mFragments;
 
-    public TabAdapter(FragmentManager fm, String[] tabName) {
+    public TabAdapter(FragmentManager fm, String[] tabName, List<Fragment> fragments) {
         super(fm);
-        this.mTabName=tabName;
+        mTabName = tabName;
+        mFragments = fragments;
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return new FirstFragment();
-            case 1:
-                return new SecondFragment();
-            case 2:
-                return new ThirdFragment();
-            case 3:
-                return new FourthFragment();
-        }
-        return new FirstFragment();
+
+        return mFragments.get(position);
     }
 
     @Override
@@ -47,4 +37,6 @@ public class TabAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         return mTabName[position];
     }
+
+
 }
