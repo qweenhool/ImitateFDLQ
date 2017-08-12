@@ -35,6 +35,7 @@ public class SearchActivity extends AppCompatActivity {
         search.requestFocus();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
+
         cancel = (TextView) findViewById(R.id.tv_cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override

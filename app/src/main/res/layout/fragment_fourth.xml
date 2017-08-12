@@ -24,7 +24,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_margin="15dp"
-            android:src="@drawable/home" />
+            android:src="@drawable/a" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -121,7 +121,7 @@
             android:layout_height="25dp"
             android:layout_margin="15dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/online_collect_rents"/>
+            android:background="@drawable/collect_account"/>
 
         <TextView
             android:layout_width="0dp"
@@ -157,7 +157,7 @@
             android:layout_height="25dp"
             android:layout_margin="15dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/online_collect_rents"/>
+            android:background="@drawable/setting"/>
 
         <TextView
             android:layout_width="0dp"
@@ -193,7 +193,7 @@
             android:layout_height="25dp"
             android:layout_margin="15dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/online_collect_rents"/>
+            android:background="@drawable/child_account"/>
 
         <TextView
             android:layout_width="0dp"
@@ -229,7 +229,7 @@
             android:layout_height="25dp"
             android:layout_margin="15dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/online_collect_rents"/>
+            android:background="@drawable/custom_service_center"/>
 
         <TextView
             android:layout_width="0dp"
@@ -265,7 +265,7 @@
             android:layout_height="25dp"
             android:layout_margin="15dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/online_collect_rents"/>
+            android:background="@drawable/system_notice"/>
 
         <TextView
             android:layout_width="0dp"
@@ -301,7 +301,7 @@
             android:layout_height="25dp"
             android:layout_margin="15dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/online_collect_rents"/>
+            android:background="@drawable/about"/>
 
         <TextView
             android:layout_width="0dp"

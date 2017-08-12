@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 
 import com.githang.statusbar.StatusBarCompat;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
@@ -74,5 +75,14 @@ public class MainActivity extends AppCompatActivity {
         tab1.setIcon(R.drawable.selector_tab2);
         tab2.setIcon(R.drawable.selector_tab3);
         tab3.setIcon(R.drawable.selector_tab4);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // 不退出程序，进入后台
+            moveTaskToBack(true);
+        }
+        return true;
     }
 }
