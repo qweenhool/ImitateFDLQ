@@ -28,9 +28,11 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:hint="房产/房号/租客/业主/手机号/账单"
+            android:background="@null"
             android:textColorHint="#babcc6"
             android:textSize="13sp"
-            android:maxLength="15" />
+            android:maxLength="15"
+            android:textCursorDrawable="@drawable/color_cursor"/>
 
         <ImageView
             android:id="@+id/iv_clear"
@@ -38,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_clear"
-            android:visibility="gone"/>
+            android:visibility="invisible"/>
     </LinearLayout>
 
     <TextView

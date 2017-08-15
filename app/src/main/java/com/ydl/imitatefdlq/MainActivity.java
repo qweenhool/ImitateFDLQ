@@ -10,9 +10,9 @@ import android.view.KeyEvent;
 import com.githang.statusbar.StatusBarCompat;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
 import com.ydl.imitatefdlq.customView.NoScrollViewPager;
-import com.ydl.imitatefdlq.fragment.FirstFragment;
+import com.ydl.imitatefdlq.fragment.HomePageFragment;
 import com.ydl.imitatefdlq.fragment.FourthFragment;
-import com.ydl.imitatefdlq.fragment.SecondFragment;
+import com.ydl.imitatefdlq.fragment.HousePropertyFragment;
 import com.ydl.imitatefdlq.fragment.ThirdFragment;
 
 import java.util.ArrayList;
@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (NoScrollViewPager) findViewById(R.id.view_pager);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
-
     }
 
     private void initData() {
@@ -51,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
         mTabName = new String[]{"首页", "房产", "房东汇", "我"};
         //新建fragment集合对象
         mFragments = new ArrayList<>();
-        mFragments.add(new FirstFragment());
-        mFragments.add(new SecondFragment());
+        mFragments.add(new HomePageFragment());
+        mFragments.add(new HousePropertyFragment());
         mFragments.add(new ThirdFragment());
         mFragments.add(new FourthFragment());
 

@@ -13,4 +13,14 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <!--设置Toolbar字体和颜色-->
+    <style name="ToolbarTheme" parent="Widget.AppCompat.Toolbar">
+        <item name="actionMenuTextColor">#ffffff</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CustomCheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/selector_checkbox</item>
+    </style>
+
 </resources>

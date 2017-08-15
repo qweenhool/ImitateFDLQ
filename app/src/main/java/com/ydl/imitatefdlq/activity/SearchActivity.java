@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
-import com.ydl.imitatefdlq.utils.EditTextUtils;
+import com.ydl.imitatefdlq.util.EditTextUtils;
 
 public class SearchActivity extends AppCompatActivity {
 

@@ -5,20 +5,21 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/tb_home_page"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="#5287E7">
 
         <TextView
             android:id="@+id/tv_toolbar_name"
             android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:textSize="18sp"
+            android:textStyle="bold"/>
     </android.support.v7.widget.Toolbar>
 
     <View
@@ -42,7 +43,7 @@
             android:drawableTop="@drawable/selector_uncollected"
             android:gravity="center"
             android:text="未收账单"
-            android:textColor="@drawable/selector_textcolor"
+            android:textColor="@drawable/selector_text_color"
             android:textSize="13sp" />
 
         <Button
@@ -54,7 +55,7 @@
             android:drawableTop="@drawable/selector_unpayed"
             android:gravity="center"
             android:text="未付账单"
-            android:textColor="@drawable/selector_textcolor"
+            android:textColor="@drawable/selector_text_color"
             android:textSize="13sp" />
 
         <Button
@@ -67,7 +68,7 @@
             android:drawableTop="@drawable/selector_payed"
             android:gravity="center"
             android:text="到账账单"
-            android:textColor="@drawable/selector_textcolor"
+            android:textColor="@drawable/selector_text_color"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -151,7 +152,7 @@
         android:background="#efeff4" />
 
     <cn.bingoogolapple.refreshlayout.BGARefreshLayout
-        android:id="@+id/refresh_layout"
+        android:id="@+id/rl_home_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

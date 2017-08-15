@@ -1,4 +1,4 @@
-package com.ydl.imitatefdlq.utils;
+package com.ydl.imitatefdlq.util;
 
 import android.text.Editable;
 import android.text.TextUtils;

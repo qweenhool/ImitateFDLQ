@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +34,7 @@ import cn.bingoogolapple.refreshlayout.BGARefreshViewHolder;
  * Created by qweenhool on 2017/8/4.
  */
 
-public class FirstFragment extends Fragment implements BGARefreshLayout.BGARefreshLayoutDelegate {
+public class HomePageFragment extends Fragment implements BGARefreshLayout.BGARefreshLayoutDelegate {
 
     @BindView(R.id.bt_uncollected)
     Button btUncollected;
@@ -77,35 +76,50 @@ public class FirstFragment extends Fragment implements BGARefreshLayout.BGARefre
     LinearLayout llWaterMeter;
     @BindView(R.id.ll_send_notice)
     LinearLayout llSendNotice;
-    @BindView(R.id.refresh_layout)
-    BGARefreshLayout refreshLayout;
     @BindView(R.id.tv_toolbar_name)
     TextView tvToolbarName;
+    @BindView(R.id.tb_home_page)
+    Toolbar tbHomePage;
+    @BindView(R.id.rl_home_page)
+    BGARefreshLayout rlHomePage;
 
-    private Toolbar toolbar;
     private AppCompatActivity activity;
     private BGARefreshViewHolder viewHolder;
     private Unbinder unbinder;
-    private static final String TAG = FirstFragment.class.getSimpleName();
+    private static final String TAG = HomePageFragment.class.getSimpleName();
 
-    public FirstFragment() {
+    public HomePageFragment() {
 
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.e(TAG, "onCreateView---");
-        View view = inflater.inflate(R.layout.fragment_first, container, false);
+        View view = inflater.inflate(R.layout.fragment_home_page, container, false);
         unbinder = ButterKnife.bind(this, view);
 
+        setToolbar();
+
+        setRefreshLayout();
+
+        return view;
+    }
+
+    private void setRefreshLayout() {
+        rlHomePage.setDelegate(this);
+        viewHolder = new BGANormalRefreshViewHolder(getContext(), false);
+        viewHolder.setRefreshViewBackgroundColorRes(R.color.colorRefreshBackGround);
+        rlHomePage.setRefreshViewHolder(viewHolder);
+
+    }
+
+    private void setToolbar() {
         //这句不添加home按钮点击无效
         setHasOptionsMenu(true);
 
-        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_search);
+        tbHomePage.setNavigationIcon(R.drawable.ic_search);
         activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
+        activity.setSupportActionBar(tbHomePage);
         tvToolbarName.setText("首页");
 
         ActionBar actionBar = activity.getSupportActionBar();
@@ -115,38 +129,15 @@ public class FirstFragment extends Fragment implements BGARefreshLayout.BGARefre
             actionBar.setTitle("");
         }
 
-        refreshLayout = (BGARefreshLayout) view.findViewById(R.id.refresh_layout);
-        refreshLayout.setDelegate(this);
-        viewHolder = new BGANormalRefreshViewHolder(getContext(), false);
-        viewHolder.setRefreshViewBackgroundColorRes(R.color.colorRefreshBackGround);
-        refreshLayout.setRefreshViewHolder(viewHolder);
-
-        return view;
+        tbHomePage.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchIntent = new Intent(getContext(), SearchActivity.class);
+                startActivity(searchIntent);
+            }
+        });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.e(TAG, "onStart---");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e(TAG, "onResume---");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.e(TAG, "onPause---");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.e(TAG, "onStop---");
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

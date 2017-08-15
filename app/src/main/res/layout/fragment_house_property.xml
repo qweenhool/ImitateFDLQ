@@ -5,27 +5,28 @@
     android:background="#ffffff">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/tb_house_property"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="#5287E7">
 
         <TextView
             android:id="@+id/tv_toolbar_name"
             android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:textSize="18sp"
+            android:textStyle="bold"/>
     </android.support.v7.widget.Toolbar>
 
     <ImageView
         android:id="@+id/iv_bg"
         android:layout_width="match_parent"
         android:layout_height="320dp"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/tb_house_property"
         android:background="@drawable/bg" />
 
     <LinearLayout
