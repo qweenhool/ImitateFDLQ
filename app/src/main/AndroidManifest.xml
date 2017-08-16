@@ -29,7 +29,9 @@
         <activity
             android:name=".activity.OtherActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.AddHouseActivity" />
+        <activity
+            android:name=".activity.AddHouseActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

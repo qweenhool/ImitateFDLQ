@@ -2,8 +2,11 @@ package com.ydl.imitatefdlq.activity;
 
 import android.annotation.TargetApi;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,6 +21,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,15 +37,19 @@ import android.widget.Toast;
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.githang.statusbar.StatusBarCompat;
 import com.hss01248.dialog.StyledDialog;
+import com.hss01248.dialog.interfaces.MyDialogListener;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.feature.HouseDBHelper;
 import com.ydl.imitatefdlq.fragment.AddRoomFragment;
 import com.ydl.imitatefdlq.util.EditTextUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,8 +87,12 @@ public class AddHouseActivity extends AppCompatActivity {
     private static final int CHOOSE_PHOTO = 2;
 
     private OptionsPickerView opvHouseType;
+    private String imagePath;
     private Uri imageUri;
-    private String[] housePhotoArr = new String[]{"拍照", "从手机相册选择"};;
+    private String[] houseTypeArr;
+    private List<String> housePhotoList;
+    private SQLiteOpenHelper helper;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +103,8 @@ public class AddHouseActivity extends AppCompatActivity {
         EditTextUtils.clearButtonListener(etAddHouseName, ivClear);
 
 
+        initData();
+
         initToolbar();
         //构建条件选择器，此处为房产类型的选择
         initOptionPicker();
@@ -99,13 +113,24 @@ public class AddHouseActivity extends AppCompatActivity {
 
     }
 
+    private void initData() {
+        housePhotoList = new ArrayList<>();
+        housePhotoList.add("拍照");
+        housePhotoList.add("从手机相册选择");
+
+        helper = new HouseDBHelper(this,"House.db",null,1);
+        db = helper.getWritableDatabase();
+
+
+    }
+
     private void initFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fl_add_room_number,new AddRoomFragment()).commit();
+        transaction.replace(R.id.fl_add_room_number, new AddRoomFragment()).commit();
     }
 
     private void initStyledDialog() {
-        StyledDialog.buildIosSingleChoose(Arrays.asList(housePhotoArr), new MyItemDialogListener() {
+        StyledDialog.buildIosSingleChoose(housePhotoList, new MyItemDialogListener() {
             @Override
             public void onItemClick(CharSequence charSequence, int i) {
                 if ("拍照".equals(charSequence)) {
@@ -136,7 +161,10 @@ public class AddHouseActivity extends AppCompatActivity {
 
                 } else if ("删除".equals(charSequence)) {
                     ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
-                    housePhotoArr = new String[]{"拍照", "从手机相册选择"};
+//                    housePhotoArr = new String[]{"拍照", "从手机相册选择"};
+                    if (housePhotoList.contains("删除")) {
+                        housePhotoList.remove("删除");
+                    }
                 }
             }
         })
@@ -145,7 +173,7 @@ public class AddHouseActivity extends AppCompatActivity {
     }
 
     private void initOptionPicker() {
-        final String[] houseTypeArr = new String[]{"住宅/小区/公寓", "商铺/门市房", "厂房/车间", "仓库/车库/停车位", "写字楼/办公室"};
+        houseTypeArr = new String[]{"住宅/小区/公寓", "商铺/门市房", "厂房/车间", "仓库/车库/停车位", "写字楼/办公室"};
         //开源库地址：https://github.com/Bigkoo/Android-PickerView
         opvHouseType = new OptionsPickerView.Builder(this, new OptionsPickerView.OnOptionsSelectListener() {
             @Override
@@ -186,6 +214,34 @@ public class AddHouseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_save) {
+            if(TextUtils.isEmpty(etAddHouseName.getText().toString().trim())){
+                StyledDialog.buildIosAlert("提醒", "房产名不能为空", new MyDialogListener() {
+                    @Override
+                    public void onFirst() {
+
+                    }
+
+                    @Override
+                    public void onSecond() {
+
+                    }
+                }).show();
+            } else {
+                //存到数据库中
+                ContentValues values = new ContentValues();
+                values.put("name",etAddHouseName.getText().toString());
+                values.put("type",tvHouseType.getText().toString());
+                if(imagePath==null){
+                    values.put("photo","");
+                }else {
+                    values.put("photo",imagePath);
+                }
+                values.put("account","");
+                values.put("room_number","");
+                db.insert("house",null,values);
+                finish();
+            }
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -197,20 +253,15 @@ public class AddHouseActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-//                    uploadToServer();
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
                         ivHousePhoto.setImageBitmap(bitmap);
-                        housePhotoArr = new String[]{"拍照", "从手机相册选择", "删除"};
+                        if (!housePhotoList.contains("删除")) {
+                            housePhotoList.add("删除");
+                        }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
-//                    if (imageUri != null) {
-//                        Glide.with(this)
-//                                .load(imageUri)
-//                                .centerCrop()
-//                                .into(ivHousePhoto);
-//                    }
 
                 }
                 break;
@@ -224,7 +275,9 @@ public class AddHouseActivity extends AppCompatActivity {
                         // 4.4以下系统使用这个方法处理图片
                         handleImageBeforeKitKat(data);
                     }
-                    housePhotoArr = new String[]{"拍照", "从手机相册选择", "删除"};
+                    if (!housePhotoList.contains("删除")) {
+                        housePhotoList.add("删除");
+                    }
                 }
                 break;
             default:
@@ -233,13 +286,9 @@ public class AddHouseActivity extends AppCompatActivity {
     }
 
 
-    private void uploadToServer() {
-
-    }
-
     @TargetApi(19)
     private void handleImageOnKitKat(Intent data) {
-        String imagePath = null;
+        imagePath = null;
         Uri uri = data.getData();
         Log.d("TAG", "handleImageOnKitKat: uri is " + uri);
         if (DocumentsContract.isDocumentUri(this, uri)) {
@@ -265,7 +314,7 @@ public class AddHouseActivity extends AppCompatActivity {
 
     private void handleImageBeforeKitKat(Intent data) {
         Uri uri = data.getData();
-        String imagePath = getImagePath(uri, null);
+        imagePath = getImagePath(uri, null);
         displayImage(imagePath);
     }
 
@@ -301,7 +350,7 @@ public class AddHouseActivity extends AppCompatActivity {
                 initStyledDialog();
                 break;
             case R.id.ll_receive_account:
-                Intent accountIntent = new Intent(this,AddAccountActivity.class);
+                Intent accountIntent = new Intent(this, AddAccountActivity.class);
                 startActivity(accountIntent);
                 break;
         }

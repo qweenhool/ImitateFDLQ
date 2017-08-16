@@ -19,8 +19,12 @@
             android:gravity="center"
             android:textColor="#ffffff"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </android.support.v7.widget.Toolbar>
+
+    <include
+        layout="@layout/layout_add_house"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/iv_bg"
