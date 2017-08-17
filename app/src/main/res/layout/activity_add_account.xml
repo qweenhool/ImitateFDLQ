@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ydl.imitatefdlq.activity.AddAccountActivity">
+    tools:context=".ui.activity.AddAccountActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_add_account"

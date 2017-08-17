@@ -9,11 +9,11 @@ import android.view.KeyEvent;
 
 import com.githang.statusbar.StatusBarCompat;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
-import com.ydl.imitatefdlq.customView.NoScrollViewPager;
-import com.ydl.imitatefdlq.fragment.HomePageFragment;
-import com.ydl.imitatefdlq.fragment.FourthFragment;
-import com.ydl.imitatefdlq.fragment.HousePropertyFragment;
-import com.ydl.imitatefdlq.fragment.ThirdFragment;
+import com.ydl.imitatefdlq.widget.NoScrollViewPager;
+import com.ydl.imitatefdlq.ui.fragment.HomePageFragment;
+import com.ydl.imitatefdlq.ui.fragment.FourthFragment;
+import com.ydl.imitatefdlq.ui.fragment.HousePropertyFragment;
+import com.ydl.imitatefdlq.ui.fragment.ThirdFragment;
 
 import java.util.ArrayList;
 import java.util.List;

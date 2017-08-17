@@ -1,4 +1,4 @@
-package com.ydl.imitatefdlq.fragment;
+package com.ydl.imitatefdlq.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
-import com.ydl.imitatefdlq.activity.OtherActivity;
+import com.ydl.imitatefdlq.ui.activity.OtherActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

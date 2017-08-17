@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#efeff4"
     android:orientation="vertical"
-    tools:context="com.ydl.imitatefdlq.activity.AddHouseActivity">
+    tools:context=".ui.activity.AddHouseActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_add_house"
@@ -151,7 +151,7 @@
                         android:text="房产照片"
                         android:textColor="#000000" />
 
-                    <com.ydl.imitatefdlq.customView.RoundImageView
+                    <com.ydl.imitatefdlq.widget.RoundImageView
                         android:id="@+id/iv_house_photo"
                         android:layout_width="50dp"
                         android:layout_height="50dp"

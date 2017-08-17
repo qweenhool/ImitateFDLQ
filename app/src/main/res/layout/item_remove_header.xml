@@ -3,7 +3,7 @@
     android:id="@+id/ll_delete_room"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/selector_ll_text_color"
+    android:background="#ffffff"
     android:clickable="true"
     android:orientation="vertical">
 

@@ -1,4 +1,4 @@
-package com.ydl.imitatefdlq.activity;
+package com.ydl.imitatefdlq.ui.activity;
 
 import android.annotation.TargetApi;
 import android.content.ContentUris;
@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
@@ -41,7 +40,7 @@ import com.hss01248.dialog.interfaces.MyDialogListener;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.feature.HouseDBHelper;
-import com.ydl.imitatefdlq.fragment.AddRoomFragment;
+import com.ydl.imitatefdlq.ui.fragment.AddRoomFragment;
 import com.ydl.imitatefdlq.util.EditTextUtils;
 
 import java.io.File;
@@ -118,15 +117,16 @@ public class AddHouseActivity extends AppCompatActivity {
         housePhotoList.add("拍照");
         housePhotoList.add("从手机相册选择");
 
-        helper = new HouseDBHelper(this,"House.db",null,1);
+        helper = new HouseDBHelper(this, "House.db", null, 1);
         db = helper.getWritableDatabase();
-
 
     }
 
     private void initFragment() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fl_add_room_number, new AddRoomFragment()).commit();
+        AddRoomFragment addRoomFragment = new AddRoomFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fl_add_room_number, addRoomFragment, addRoomFragment.getClass().getSimpleName())
+                .commit();
     }
 
     private void initStyledDialog() {
@@ -214,7 +214,7 @@ public class AddHouseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_save) {
-            if(TextUtils.isEmpty(etAddHouseName.getText().toString().trim())){
+            if (TextUtils.isEmpty(etAddHouseName.getText().toString().trim())) {
                 StyledDialog.buildIosAlert("提醒", "房产名不能为空", new MyDialogListener() {
                     @Override
                     public void onFirst() {
@@ -227,24 +227,44 @@ public class AddHouseActivity extends AppCompatActivity {
                     }
                 }).show();
             } else {
-                //存到数据库中
-                ContentValues values = new ContentValues();
-                values.put("name",etAddHouseName.getText().toString());
-                values.put("type",tvHouseType.getText().toString());
-                if(imagePath==null){
-                    values.put("photo","");
-                }else {
-                    values.put("photo",imagePath);
-                }
-                values.put("account","");
-                values.put("room_number","");
-                db.insert("house",null,values);
+                saveData();
+                //来个ios样式的loading
+                StyledDialog.buildLoading("请稍后").show();
+                Intent roomNumberIntent = new Intent(this, RoomNumberActivity.class);
+                startActivity(roomNumberIntent);
                 finish();
             }
 
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //将用户保存的数据存到数据库中
+    private void saveData() {
+        ContentValues values = new ContentValues();
+        values.put("name", etAddHouseName.getText().toString());
+        values.put("type", tvHouseType.getText().toString());
+        if (imagePath == null) {
+            values.put("photo", "");
+        } else {
+            values.put("photo", imagePath);
+        }
+        values.put("account", "");
+
+        LinearLayout container = (LinearLayout) getSupportFragmentManager().findFragmentByTag(AddRoomFragment.class.getSimpleName()).getView().findViewById(R.id.ll_container);
+        StringBuilder sb = new StringBuilder();
+        EditText et;
+        for (int i = 0; i < container.getChildCount(); i++) {
+            et = (EditText) container.getChildAt(i).findViewById(R.id.et_add_room_number);
+            if (!TextUtils.isEmpty(et.getText().toString().trim())) {
+                sb.append(et.getText().toString().trim() + ",");
+            } else {
+                sb.append("");
+            }
+        }
+        values.put("room_number", sb.toString());
+        db.insert("house", null, values);
     }
 
     @Override

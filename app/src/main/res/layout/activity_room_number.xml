@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#efeff4"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#ffffff">
+
+        <com.ydl.imitatefdlq.widget.RoundImageView
+            android:id="@+id/riv_house_photo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/room_info"/>
+
+        <TextView
+            android:id="@+id/tv_house_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/riv_house_photo"
+            android:layout_toEndOf="@+id/riv_house_photo"
+            android:layout_toRightOf="@+id/riv_house_photo"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            android:maxLength="40"
+            android:text="盛世新都"
+            android:textColor="#000000"/>
+
+        <TextView
+            android:id="@+id/tv_house_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="商铺/门市房"
+            android:layout_alignBottom="@+id/riv_house_photo"
+            android:layout_toRightOf="@+id/riv_house_photo"
+            android:layout_toEndOf="@+id/riv_house_photo"
+            android:layout_marginBottom="5dp"
+            android:textSize="12sp"
+            android:textColor="#81838e"/>
+
+        <ImageView
+            android:id="@+id/iv_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="20dp"
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_add_room_number"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/selector_ll_text_color"
+        android:clickable="true"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_add_circle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加房号"
+            android:textColor="#5687e7" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#d9d9d9"
+        android:layout_marginBottom="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/ll_room_number_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:src="@drawable/door"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="暂未添加房号"
+            android:textSize="18dp"
+            android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/not_add_room_number_yet"
+            android:textSize="14dp"
+            android:layout_marginTop="15dp"/>
+    </LinearLayout>
+
+</LinearLayout>

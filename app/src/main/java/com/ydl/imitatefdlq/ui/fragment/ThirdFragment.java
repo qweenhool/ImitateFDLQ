@@ -1,4 +1,4 @@
-package com.ydl.imitatefdlq.fragment;
+package com.ydl.imitatefdlq.ui.fragment;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -20,7 +20,7 @@ import android.view.ViewGroup;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.ydl.imitatefdlq.R;
-import com.ydl.imitatefdlq.activity.OtherActivity;
+import com.ydl.imitatefdlq.ui.activity.OtherActivity;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
 
 import java.util.ArrayList;

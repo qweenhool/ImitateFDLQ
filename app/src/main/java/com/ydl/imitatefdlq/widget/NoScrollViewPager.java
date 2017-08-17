@@ -1,4 +1,4 @@
-package com.ydl.imitatefdlq.customView;
+package com.ydl.imitatefdlq.widget;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

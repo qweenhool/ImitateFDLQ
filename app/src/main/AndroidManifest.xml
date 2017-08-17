@@ -24,13 +24,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SearchActivity"
+            android:name=".ui.activity.SearchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.OtherActivity"
+            android:name=".ui.activity.OtherActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.AddHouseActivity"
+            android:name=".ui.activity.AddHouseActivity"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" />
 
         <provider
@@ -43,7 +43,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activity.AddAccountActivity"></activity>
+        <activity android:name=".ui.activity.AddAccountActivity"></activity>
+
+        <activity android:name=".ui.activity.RoomNumberActivity"></activity>
     </application>
 
 </manifest>

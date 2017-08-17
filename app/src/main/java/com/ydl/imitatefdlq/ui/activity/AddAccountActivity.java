@@ -1,4 +1,4 @@
-package com.ydl.imitatefdlq.activity;
+package com.ydl.imitatefdlq.ui.activity;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
