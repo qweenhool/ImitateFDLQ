@@ -3,11 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#ffffff"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:layout_marginTop="5dp">
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -39,14 +40,15 @@
                     android:layout_height="wrap_content"
                     android:text="闲置房号"
                     android:textColor="#000000"
-                    android:textSize="18sp" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="0间"
-                    android:textColor="#95969f" />
+                    android:textColor="#95969f"
+                    android:textSize="12sp"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -68,13 +70,13 @@
                 android:drawablePadding="10dp"
                 android:text="备忘提醒"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="17sp" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -106,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:text="集中抄表"
                     android:textColor="#000000"
-                    android:textSize="18sp" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -114,7 +116,8 @@
                     android:layout_marginTop="10dp"
                     android:maxLines="2"
                     android:text="抄表算水电，一步搞定"
-                    android:textColor="#95969f" />
+                    android:textColor="#95969f"
+                    android:textSize="12sp"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -136,7 +139,7 @@
                 android:drawablePadding="10dp"
                 android:text="通知群发"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="17sp" />
 
         </LinearLayout>
     </LinearLayout>

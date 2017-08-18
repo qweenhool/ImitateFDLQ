@@ -2,14 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#ffffff">
+    android:background="#efeff4">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_house_property"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#5287E7">
+        android:background="#5287E7"
+        app:theme="@style/ToolbarTheme">
 
         <TextView
             android:id="@+id/tv_toolbar_name"
@@ -24,13 +26,14 @@
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
+        android:id="@+id/ll_add_house_gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/ll_add_house_gone"
+            android:id="@+id/ll_add_house_button_above"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:background="@drawable/selector_ll_text_color"
@@ -54,55 +57,60 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
             android:background="#d9d9d9" />
 
-        <ScrollView
-            android:id="@+id/sv_container"
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/refresh_layout_house_property"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/ll_container"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_house_property"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
 
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-            </LinearLayout>
-
-        </ScrollView>
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/iv_bg"
-        android:layout_width="match_parent"
-        android:layout_height="320dp"
-        android:layout_below="@id/tb_house_property"
-        android:background="@drawable/bg" />
-
     <LinearLayout
-        android:id="@+id/ll_add_house"
-        android:layout_width="250dp"
-        android:layout_height="45dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/rectangle_with_corner_and_stroke"
-        android:gravity="center">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#ffffff">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/ic_add_circle" />
+            android:id="@+id/iv_bg"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:background="@drawable/bg" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="添加房产"
-            android:textColor="#5687e7" />
+        <LinearLayout
+            android:id="@+id/ll_add_house_button_below"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rectangle_with_corner_and_stroke"
+            android:gravity="center">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_add_circle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="添加房产"
+                android:textColor="#5687e7" />
+
+        </LinearLayout>
     </LinearLayout>
 
 

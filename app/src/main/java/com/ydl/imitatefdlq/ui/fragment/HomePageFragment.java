@@ -17,6 +17,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.ui.activity.OtherActivity;
 import com.ydl.imitatefdlq.ui.activity.SearchActivity;
@@ -25,7 +28,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import cn.bingoogolapple.refreshlayout.BGANormalRefreshViewHolder;
 import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
 import cn.bingoogolapple.refreshlayout.BGARefreshViewHolder;
 
@@ -80,13 +82,13 @@ public class HomePageFragment extends Fragment implements BGARefreshLayout.BGARe
     TextView tvToolbarName;
     @BindView(R.id.tb_home_page)
     Toolbar tbHomePage;
-    @BindView(R.id.rl_home_page)
-    BGARefreshLayout rlHomePage;
+    @BindView(R.id.refresh_layout_home_page)
+    SmartRefreshLayout refreshLayoutHomePage;
+
 
     private AppCompatActivity activity;
     private BGARefreshViewHolder viewHolder;
     private Unbinder unbinder;
-    private static final String TAG = HomePageFragment.class.getSimpleName();
 
     public HomePageFragment() {
 
@@ -106,11 +108,12 @@ public class HomePageFragment extends Fragment implements BGARefreshLayout.BGARe
     }
 
     private void setRefreshLayout() {
-        rlHomePage.setDelegate(this);
-        viewHolder = new BGANormalRefreshViewHolder(getContext(), false);
-        viewHolder.setRefreshViewBackgroundColorRes(R.color.colorRefreshBackGround);
-        rlHomePage.setRefreshViewHolder(viewHolder);
-
+        refreshLayoutHomePage.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshLayoutHomePage.finishRefresh(2000,true);
+            }
+        });
     }
 
     private void setToolbar() {

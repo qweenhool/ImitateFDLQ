@@ -39,7 +39,7 @@ import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyDialogListener;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
 import com.ydl.imitatefdlq.R;
-import com.ydl.imitatefdlq.feature.HouseDBHelper;
+import com.ydl.imitatefdlq.db.HouseDBHelper;
 import com.ydl.imitatefdlq.ui.fragment.AddRoomFragment;
 import com.ydl.imitatefdlq.util.EditTextUtils;
 
@@ -100,7 +100,6 @@ public class AddHouseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorStatusbar), false);
         EditTextUtils.clearButtonListener(etAddHouseName, ivClear);
-
 
         initData();
 
@@ -231,6 +230,7 @@ public class AddHouseActivity extends AppCompatActivity {
                 //来个ios样式的loading
                 StyledDialog.buildLoading("请稍后").show();
                 Intent roomNumberIntent = new Intent(this, RoomNumberActivity.class);
+                roomNumberIntent.putExtra("LAST_INDEX","last_index");
                 startActivity(roomNumberIntent);
                 finish();
             }
@@ -370,7 +370,7 @@ public class AddHouseActivity extends AppCompatActivity {
                 initStyledDialog();
                 break;
             case R.id.ll_receive_account:
-                Intent accountIntent = new Intent(this, AddAccountActivity.class);
+                Intent accountIntent = new Intent(this, SelectAccountActivity.class);
                 startActivity(accountIntent);
                 break;
         }

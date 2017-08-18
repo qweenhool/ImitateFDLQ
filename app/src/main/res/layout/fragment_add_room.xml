@@ -18,11 +18,6 @@
         android:layout_height="1dp"
         android:background="#d9d9d9" />
 
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/rv_add_room"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content" />-->
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -37,7 +32,7 @@
 
     </ScrollView>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:id="@+id/ll_add_room"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

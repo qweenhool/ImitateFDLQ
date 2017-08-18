@@ -1,4 +1,4 @@
-package com.ydl.imitatefdlq.feature;
+package com.ydl.imitatefdlq.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

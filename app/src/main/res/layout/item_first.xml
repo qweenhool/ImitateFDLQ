@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/ll_upcoming"
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="105dp"
         android:layout_weight="1"
         android:orientation="horizontal"
         android:background="@drawable/selector_ll_text_color"
@@ -33,20 +33,21 @@
                 android:layout_height="wrap_content"
                 android:text="即将到期"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_upcoming"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="暂无到期" />
+                android:text="暂无到期"
+                android:textSize="12sp"/>
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="105dp"
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical">
@@ -68,7 +69,8 @@
                 android:layout_marginLeft="15dp"
                 android:gravity="center"
                 android:text="租客"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/tv_renter"
@@ -76,7 +78,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:text="0人"
-                android:textColor="#95969f" />
+                android:textColor="#95969f"
+                android:textSize="12sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -96,7 +99,8 @@
                 android:layout_marginLeft="15dp"
                 android:gravity="center"
                 android:text="业主"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/tv_owner"
@@ -104,7 +108,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:text="0人"
-                android:textColor="#95969f" />
+                android:textColor="#95969f"
+                android:textSize="12sp"/>
         </LinearLayout>
 
     </LinearLayout>

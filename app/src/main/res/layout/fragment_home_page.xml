@@ -2,13 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#efeff4">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_home_page"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#5287E7">
+        android:background="#5287E7"
+        app:theme="@style/ToolbarTheme">
 
         <TextView
             android:id="@+id/tv_toolbar_name"
@@ -146,20 +149,15 @@
 
     </LinearLayout>
 
-    <View
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refresh_layout_home_page"
         android:layout_width="match_parent"
-        android:layout_height="13dp"
-        android:background="#efeff4" />
-
-    <cn.bingoogolapple.refreshlayout.BGARefreshLayout
-        android:id="@+id/rl_home_page"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp">
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -168,24 +166,19 @@
 
                 <include layout="@layout/item_first" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:background="#efeff4" />
-
                 <include layout="@layout/item_second" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:background="#efeff4" />
 
                 <include layout="@layout/item_third" />
 
             </LinearLayout>
 
         </ScrollView>
-    </cn.bingoogolapple.refreshlayout.BGARefreshLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="13dp"
+        android:background="#efeff4" />
 
 
 </LinearLayout>
