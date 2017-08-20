@@ -9,10 +9,6 @@
 
     </style>
 
-    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-    </style>
-
     <!--设置Toolbar字体和颜色-->
     <style name="ToolbarTheme" parent="Widget.AppCompat.Toolbar">
         <item name="actionMenuTextColor">#ffffff</item>

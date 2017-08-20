@@ -12,8 +12,11 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.githang.statusbar.StatusBarCompat;
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.util.StatusBarCompat;
+
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by qweenhool on 2017/8/17.
@@ -21,12 +24,13 @@ import com.ydl.imitatefdlq.R;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+    private Unbinder mUnbinder;
     private Toolbar toolbar;
     private FrameLayout container;
     private TextView textView;
     // icon图标id
-    int menuResId;
-    String menuStr;
+    private int menuResId;
+    private String menuStr;
 
     OnClickListener onClickListenerTopLeft;
     OnClickListener onClickListenerTopRight;
@@ -41,7 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_base);
 
         //设置status bar的颜色为黑色
-        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorStatusbar), false);
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         container = (FrameLayout) findViewById(R.id.fl_container);
@@ -52,12 +56,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         //将继承 getContentView() 得到的布局解析到 FrameLayout 里面
         LayoutInflater.from(BaseActivity.this).inflate(getContentView(), container);
-        initToolbar();
+        //这句话要放到这里才不会出错
+        mUnbinder = ButterKnife.bind(this);
+        init(savedInstanceState);
     }
 
     protected abstract int getContentView();
 
-    protected abstract void initToolbar();
+    protected abstract void init(Bundle savedInstanceState);
 
     protected void setTitle(String title) {
         if (!TextUtils.isEmpty(title)) {
@@ -71,8 +77,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void setTopRightButton(String menuStr, int menuResId, OnClickListener onClickListener) {
-        this.menuResId = menuResId;
         this.menuStr = menuStr;
+        this.menuResId = menuResId;
         this.onClickListenerTopRight = onClickListener;
     }
 
@@ -102,5 +108,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return true; // true 告诉系统我们自己处理了点击事件
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mUnbinder.unbind();
+    }
+
 
 }

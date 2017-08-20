@@ -30,6 +30,7 @@ import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.adapter.HousePropertyAdapter;
 import com.ydl.imitatefdlq.db.HouseDBHelper;
 import com.ydl.imitatefdlq.entity.House;
+import com.ydl.imitatefdlq.interfaze.OnItemClickListener;
 import com.ydl.imitatefdlq.ui.activity.AddHouseActivity;
 import com.ydl.imitatefdlq.ui.activity.RoomNumberActivity;
 import com.ydl.imitatefdlq.ui.activity.SearchActivity;
@@ -46,7 +47,7 @@ import butterknife.Unbinder;
  * Created by qweenhool on 2017/8/4.
  */
 
-public class HousePropertyFragment extends Fragment implements HousePropertyAdapter.OnHouseItemClickListener {
+public class HousePropertyFragment extends Fragment implements OnItemClickListener {
 
     Unbinder unbinder;
     @BindView(R.id.tv_toolbar_name)
@@ -78,7 +79,7 @@ public class HousePropertyFragment extends Fragment implements HousePropertyAdap
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_house_property, container, false);
         unbinder = ButterKnife.bind(this, view);
-        Log.e("onCreateView","onCreateView");
+        Log.e("onCreateView", "onCreateView");
         initData();
         setToolbar();
         setRefreshLayout();
@@ -148,7 +149,6 @@ public class HousePropertyFragment extends Fragment implements HousePropertyAdap
                 house.setAccount(account);
                 house.setRoomNumber(roomNumber);
                 houseList.add(house);
-                Log.e("HousePropertyFragment", "onResume-----" + houseList.size());
             } while (cursor.moveToNext());
 
             llAddHouseGone.setVisibility(View.VISIBLE);
@@ -172,21 +172,13 @@ public class HousePropertyFragment extends Fragment implements HousePropertyAdap
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
-        Log.e("onCreateOptionsMenu","onCreateOptionsMenu");
+        Log.e(this.getClass().getSimpleName(), "onCreateOptionsMenu-----");
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-        Log.e("onPrepareOptionsMenu","onPrepareOptionsMenu");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
+        Log.e(this.getClass().getSimpleName(), "onPrepareOptionsMenu-----");
     }
 
     @Override
@@ -221,7 +213,14 @@ public class HousePropertyFragment extends Fragment implements HousePropertyAdap
     @Override
     public void onItemClick(int position) {
         Intent roomNumberIntent = new Intent(getContext(), RoomNumberActivity.class);
-        roomNumberIntent.putExtra("ROOM_INDEX", adapter.getItemCount() - position);
+        roomNumberIntent.putExtra("room_index", adapter.getItemCount() - position);
         startActivity(roomNumberIntent);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

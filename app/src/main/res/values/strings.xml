@@ -3,6 +3,7 @@
 
 
     <string name="not_add_room_number_yet">点击\"添加房号\"添加房号信息\n即可录入租客信息，管理账单</string>
+    <string name="no_renter_yet">点击\"添加租客\"录入租客信息\n快速管理租客账单</string>
 
 
 </resources>

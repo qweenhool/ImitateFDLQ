@@ -9,11 +9,11 @@ import android.view.KeyEvent;
 
 import com.githang.statusbar.StatusBarCompat;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
-import com.ydl.imitatefdlq.widget.NoScrollViewPager;
-import com.ydl.imitatefdlq.ui.fragment.HomePageFragment;
 import com.ydl.imitatefdlq.ui.fragment.FourthFragment;
+import com.ydl.imitatefdlq.ui.fragment.HomePageFragment;
 import com.ydl.imitatefdlq.ui.fragment.HousePropertyFragment;
 import com.ydl.imitatefdlq.ui.fragment.ThirdFragment;
+import com.ydl.imitatefdlq.widget.NoScrollViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         tab1.setIcon(R.drawable.selector_tab2);
         tab2.setIcon(R.drawable.selector_tab3);
         tab3.setIcon(R.drawable.selector_tab4);
+
     }
 
     @Override

@@ -9,9 +9,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.githang.statusbar.StatusBarCompat;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.util.EditTextUtils;
+import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -23,7 +23,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorStatusbar), false);
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
         iniView();
 
     }

@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
@@ -34,14 +35,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
-import com.githang.statusbar.StatusBarCompat;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyDialogListener;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.db.HouseDBHelper;
 import com.ydl.imitatefdlq.ui.fragment.AddRoomFragment;
+import com.ydl.imitatefdlq.ui.fragment.BatchAddRoomFragment;
 import com.ydl.imitatefdlq.util.EditTextUtils;
+import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -92,13 +94,17 @@ public class AddHouseActivity extends AppCompatActivity {
     private List<String> housePhotoList;
     private SQLiteOpenHelper helper;
     private SQLiteDatabase db;
+    private AddRoomFragment addRoomFragment;
+    private BatchAddRoomFragment batchAddRoomFragment;
+    //批量添加房号开关
+    private boolean isBatchAddRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_house);
         ButterKnife.bind(this);
-        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorStatusbar), false);
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
         EditTextUtils.clearButtonListener(etAddHouseName, ivClear);
 
         initData();
@@ -107,7 +113,7 @@ public class AddHouseActivity extends AppCompatActivity {
         //构建条件选择器，此处为房产类型的选择
         initOptionPicker();
 
-        initFragment();
+        initFragment(savedInstanceState);
 
     }
 
@@ -121,10 +127,19 @@ public class AddHouseActivity extends AppCompatActivity {
 
     }
 
-    private void initFragment() {
-        AddRoomFragment addRoomFragment = new AddRoomFragment();
+    private void initFragment(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            addRoomFragment = new AddRoomFragment();
+            batchAddRoomFragment = new BatchAddRoomFragment();
+        }else {
+            //Todo 先存，再取
+        }
+
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_add_room_number, addRoomFragment, addRoomFragment.getClass().getSimpleName())
+                .add(R.id.fl_add_room_number, addRoomFragment, addRoomFragment.getClass().getSimpleName())
+                .add(R.id.fl_add_room_number, batchAddRoomFragment,batchAddRoomFragment.getClass().getSimpleName())
+                .hide(batchAddRoomFragment)
+                .show(addRoomFragment)
                 .commit();
     }
 
@@ -230,7 +245,7 @@ public class AddHouseActivity extends AppCompatActivity {
                 //来个ios样式的loading
                 StyledDialog.buildLoading("请稍后").show();
                 Intent roomNumberIntent = new Intent(this, RoomNumberActivity.class);
-                roomNumberIntent.putExtra("LAST_INDEX","last_index");
+                roomNumberIntent.putExtra("last_index", "last_index");
                 startActivity(roomNumberIntent);
                 finish();
             }
@@ -252,7 +267,10 @@ public class AddHouseActivity extends AppCompatActivity {
         }
         values.put("account", "");
 
-        LinearLayout container = (LinearLayout) getSupportFragmentManager().findFragmentByTag(AddRoomFragment.class.getSimpleName()).getView().findViewById(R.id.ll_container);
+        LinearLayout container = (LinearLayout) getSupportFragmentManager()
+                .findFragmentByTag(AddRoomFragment.class.getSimpleName())
+                .getView()
+                .findViewById(R.id.ll_container);
         StringBuilder sb = new StringBuilder();
         EditText et;
         for (int i = 0; i < container.getChildCount(); i++) {
@@ -376,4 +394,24 @@ public class AddHouseActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.cb_add_house_number)
+    public void onViewClicked() {
+        if(!isBatchAddRoom){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)//添加转换动画
+                    .show(batchAddRoomFragment)
+                    .hide(addRoomFragment)
+                    .commit();
+            isBatchAddRoom = true;
+        }else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                    .show(addRoomFragment)
+                    .hide(batchAddRoomFragment)
+                    .commit();
+            isBatchAddRoom = false;
+        }
+    }
 }

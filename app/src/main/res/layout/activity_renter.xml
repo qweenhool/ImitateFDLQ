@@ -9,41 +9,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#ffffff">
-
-        <com.ydl.imitatefdlq.widget.RoundImageView
-            android:id="@+id/riv_house_photo"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/room_info"/>
+        android:background="#ffffff"
+        android:paddingLeft="15dp">
 
         <TextView
             android:id="@+id/tv_house_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/riv_house_photo"
-            android:layout_toEndOf="@+id/riv_house_photo"
-            android:layout_toRightOf="@+id/riv_house_photo"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="20dp"
             android:singleLine="true"
-            android:maxLength="40"
-            android:text="盛世新都"
-            android:textColor="#000000"/>
+            android:maxLength="20"
+            android:text="房间号"
+            android:textColor="#000000"
+            />
 
         <TextView
             android:id="@+id/tv_house_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="商铺/门市房"
-            android:layout_alignBottom="@+id/riv_house_photo"
-            android:layout_toRightOf="@+id/riv_house_photo"
-            android:layout_toEndOf="@+id/riv_house_photo"
-            android:layout_marginBottom="5dp"
+            android:text="房产名"
+            android:layout_marginTop="5dp"
             android:textSize="12sp"
+            android:layout_below="@id/tv_house_name"
             android:textColor="#81838e"/>
 
         <ImageView
@@ -76,7 +63,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="添加房号"
+            android:text="添加租客"
             android:textColor="#5687e7" />
     </LinearLayout>
 
@@ -111,20 +98,21 @@
         <ImageView
             android:layout_width="130dp"
             android:layout_height="130dp"
-            android:src="@drawable/no_room_hint"/>
+            android:src="@drawable/no_renter_hint"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="暂未添加房号"
+            android:text="暂无租客入住"
             android:textSize="18dp"
             android:layout_marginTop="20dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/not_add_room_number_yet"
+            android:text="@string/no_renter_yet"
             android:textSize="14dp"
+            android:gravity="center"
             android:layout_marginTop="15dp"/>
     </LinearLayout>
 

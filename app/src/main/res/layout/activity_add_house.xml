@@ -245,13 +245,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#d9d9d9" />
+                android:background="#d9d9d9"
+                android:layout_marginBottom="10dp" />
 
             <FrameLayout
                 android:id="@+id/fl_add_room_number"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp" />
+                />
         </LinearLayout>
     </ScrollView>
 

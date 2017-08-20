@@ -15,8 +15,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CustomTheme">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,6 +30,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.AddHouseActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" />
 
         <provider
@@ -43,11 +43,24 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ui.activity.SelectAccountActivity" />
-        <activity android:name=".ui.activity.RoomNumberActivity" />
-        <activity android:name=".ui.activity.ModifyPropertyActivity" />
-        <activity android:name=".ui.activity.AddRoomNumberActivity" />
-        <activity android:name=".ui.activity.AddAccountActivity"></activity>
+        <activity
+            android:name=".ui.activity.SelectAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.RoomNumberActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.ModifyPropertyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.AddRoomNumberActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.AddAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.RenterActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

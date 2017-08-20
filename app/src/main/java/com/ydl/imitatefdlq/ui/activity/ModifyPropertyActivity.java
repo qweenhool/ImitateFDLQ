@@ -18,11 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.githang.statusbar.StatusBarCompat;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyDialogListener;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.db.HouseDBHelper;
+import com.ydl.imitatefdlq.util.StatusBarCompat;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
 import butterknife.BindView;
@@ -64,8 +64,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_property);
         ButterKnife.bind(this);
-        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorStatusbar), false);
-
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
         initToolbar();
 
         initData();
@@ -94,8 +93,8 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         db = helper.getWritableDatabase();
 
         Intent intent = getIntent();
-        etHouseName.setText(intent.getStringExtra("NAME"));
-        tvHouseType.setText(intent.getStringExtra("TYPE"));
+        etHouseName.setText(intent.getStringExtra("name"));
+        tvHouseType.setText(intent.getStringExtra("type"));
     }
 
     @Override

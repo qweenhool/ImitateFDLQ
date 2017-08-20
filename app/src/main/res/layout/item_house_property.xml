@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:background="@drawable/selector_ll_text_color"
     android:id="@+id/rl_house_item">
 
     <com.ydl.imitatefdlq.widget.RoundImageView

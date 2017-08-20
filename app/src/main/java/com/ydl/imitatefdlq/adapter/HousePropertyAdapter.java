@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.entity.House;
+import com.ydl.imitatefdlq.interfaze.OnItemClickListener;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
 import java.util.List;
@@ -23,14 +24,10 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
     private Context mContext;
     private List<House> mHouseList;
     private LayoutInflater mInflater;
-    private OnHouseItemClickListener listener;
+    private OnItemClickListener listener;
 
-    public void setOnItemClickListener(OnHouseItemClickListener listener) {
+    public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
-    }
-
-    public interface OnHouseItemClickListener {
-        void onItemClick(int position);
     }
 
     public HousePropertyAdapter(Context context, List<House> houseList) {

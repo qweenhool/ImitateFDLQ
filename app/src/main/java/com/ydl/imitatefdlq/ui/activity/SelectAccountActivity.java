@@ -12,10 +12,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.githang.statusbar.StatusBarCompat;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 import java.util.Arrays;
 
@@ -40,7 +40,7 @@ public class SelectAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_account);
         ButterKnife.bind(this);
 
-        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorStatusbar), false);
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
         initToolbar();
     }
 

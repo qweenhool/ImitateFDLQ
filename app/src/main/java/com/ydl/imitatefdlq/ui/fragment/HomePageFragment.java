@@ -1,7 +1,6 @@
 package com.ydl.imitatefdlq.ui.fragment;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,15 +27,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
-import cn.bingoogolapple.refreshlayout.BGARefreshViewHolder;
 
 
 /**
  * Created by qweenhool on 2017/8/4.
  */
 
-public class HomePageFragment extends Fragment implements BGARefreshLayout.BGARefreshLayoutDelegate {
+public class HomePageFragment extends Fragment{
 
     @BindView(R.id.bt_uncollected)
     Button btUncollected;
@@ -87,7 +84,6 @@ public class HomePageFragment extends Fragment implements BGARefreshLayout.BGARe
 
 
     private AppCompatActivity activity;
-    private BGARefreshViewHolder viewHolder;
     private Unbinder unbinder;
 
     public HomePageFragment() {
@@ -151,38 +147,6 @@ public class HomePageFragment extends Fragment implements BGARefreshLayout.BGARe
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBGARefreshLayoutBeginRefreshing(final BGARefreshLayout refreshLayout) {
-
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                //模拟耗时操作
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                refreshLayout.endRefreshing();
-
-            }
-        }.execute();
-
-
-    }
-
-    @Override
-    public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
-        return false;
     }
 
     @Override
