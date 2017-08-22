@@ -1,4 +1,4 @@
-package com.ydl.imitatefdlq;
+package com.ydl.imitatefdlq.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -7,12 +7,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
-import com.githang.statusbar.StatusBarCompat;
+import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
 import com.ydl.imitatefdlq.ui.fragment.FourthFragment;
 import com.ydl.imitatefdlq.ui.fragment.HomePageFragment;
 import com.ydl.imitatefdlq.ui.fragment.HousePropertyFragment;
 import com.ydl.imitatefdlq.ui.fragment.ThirdFragment;
+import com.ydl.imitatefdlq.util.StatusBarCompat;
 import com.ydl.imitatefdlq.widget.NoScrollViewPager;
 
 import java.util.ArrayList;
@@ -30,9 +31,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
 
-        //设置状态栏颜色为黑色，这里图省事引用了一个库
-        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorStatusbar), false);
         initView();
         initData();
 

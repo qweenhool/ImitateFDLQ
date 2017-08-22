@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class HouseDBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_HOUSE = "create table house ("
-            + "id integer primary key autoincrement,"
+            + "_id integer primary key autoincrement,"
             + "name varchar(80),"
             + "type varchar(40),"
             + "photo text,"

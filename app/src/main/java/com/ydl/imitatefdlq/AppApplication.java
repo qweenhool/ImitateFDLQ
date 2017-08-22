@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
+import com.lzy.okgo.OkGo;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreater;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
@@ -24,8 +25,11 @@ public class AppApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //DialogUtil初始化
         StyledDialog.init(getApplicationContext());
         registerCallback();
+        //OkGo初始化
+        OkGo.getInstance().init(this);
     }
 
     static {
@@ -33,7 +37,6 @@ public class AppApplication extends Application {
         SmartRefreshLayout.setDefaultRefreshHeaderCreater(new DefaultRefreshHeaderCreater() {
             @Override
             public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
-//                layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);//全局设置主题颜色
                 return new ClassicsHeader(context).setSpinnerStyle(SpinnerStyle.Translate);//指定为经典Header，默认是 贝塞尔雷达Header
             }
         });

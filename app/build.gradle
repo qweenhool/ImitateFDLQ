@@ -26,10 +26,10 @@ dependencies {
     })
 
 
+    compile files('libs/BASE64.jar')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:25.3.1'
-    compile 'com.githang:status-bar-compat:latest.integration'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.jakewharton:butterknife:8.8.0'
@@ -37,6 +37,9 @@ dependencies {
     compile 'com.contrarywind:Android-PickerView:3.2.6'
     compile 'com.github.hss01248:DialogUtil:1.1.6'
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.3'
+    compile 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.2.5'
+    compile 'com.lzy.net:okgo:3.0.4'
+    compile 'com.google.code.gson:gson:2.7'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.0'
 }

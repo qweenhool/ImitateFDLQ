@@ -97,7 +97,7 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
         String last_index = intent.getStringExtra("last_index");
         if (!TextUtils.isEmpty(last_index) && last_index.equals("last_index")) {
             //查询最后一行的数据
-            cursor = db.rawQuery("select * from house order by id desc limit 0,1", null);
+            cursor = db.rawQuery("select * from house order by _id desc limit 0,1", null);
         } else {
             //根据item点击得到的position进而得到数据库的id来查找
             cursor = db.rawQuery("select * from house where id = ?", new String[]{String.valueOf(id)});
