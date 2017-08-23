@@ -1,6 +1,5 @@
 package com.ydl.imitatefdlq.ui.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -65,7 +64,6 @@ public class HousePropertyFragment extends Fragment {
     SmartRefreshLayout refreshLayoutHouseProperty;
 
     private AppCompatActivity activity;
-    private Context context;
     private SQLiteOpenHelper helper;
     private SQLiteDatabase db;
     private List<House> houseList;
@@ -76,7 +74,7 @@ public class HousePropertyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_house_property, container, false);
         unbinder = ButterKnife.bind(this, view);
-        Log.e("onCreateView", "onCreateView");
+        Log.e("HousePropertyFragment", "onCreateView");
         initData();
         setToolbar();
         setRefreshLayout();
@@ -87,10 +85,10 @@ public class HousePropertyFragment extends Fragment {
     private void initData() {
         helper = new HouseDBHelper(getContext(), "House.db", null, 1);
         db = helper.getWritableDatabase();
-        context = getContext();
     }
 
     private void setToolbar() {
+
         setHasOptionsMenu(true);
 
         activity = (AppCompatActivity) getActivity();
@@ -161,6 +159,7 @@ public class HousePropertyFragment extends Fragment {
             llAddHouseGone.setVisibility(View.GONE);
             ivBg.setVisibility(View.VISIBLE);
             llAddHouseButtonBelow.setVisibility(View.VISIBLE);
+            cursor.close();
         }
 
     }

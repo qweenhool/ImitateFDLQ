@@ -1,5 +1,6 @@
 package com.ydl.imitatefdlq.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -66,6 +67,8 @@ public class RegisterActivity extends AppCompatActivity {
                                         StyledDialog.dismissLoading();
                                         Toast.makeText(RegisterActivity.this, data, Toast.LENGTH_SHORT).show();
                                         //Todo 跳转到主界面
+                                        Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
+                                        startActivity(intent);
                                         break;
                                     case 1://服务器异常
                                         String errorString1 = resultJson.getErrorString();
@@ -95,6 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
                             @Override
                             public void onError(Response<String> response) {
                                 super.onError(response);
+                                Toast.makeText(RegisterActivity.this, "服务器不可用，请稍后重试", Toast.LENGTH_SHORT).show();
                                 StyledDialog.dismissLoading();
                             }
                         });

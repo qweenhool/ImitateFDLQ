@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EDECF0"
+    android:orientation="vertical">
+
+    <!--<com.daimajia.numberprogressbar.NumberProgressBar-->
+        <!--android:id="@+id/progress_bar"-->
+        <!--android:layout_width="300dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+
+        <!--custom:progress_current="0"-->
+        <!--custom:progress_max="100"-->
+
+        <!--custom:progress_reached_bar_height="8dp"-->
+        <!--custom:progress_reached_color="#4B81E3"-->
+
+        <!--custom:progress_text_color="#4B81E3"-->
+        <!--custom:progress_text_offset="1dp"-->
+        <!--custom:progress_text_size="15sp"-->
+        <!--custom:progress_text_visibility="visible"-->
+
+        <!--custom:progress_unreached_bar_height="8dp"-->
+        <!--custom:progress_unreached_color="#ffffff" />-->
+
+    <android.support.v4.widget.ContentLoadingProgressBar
+        android:layout_width="300dp"
+        android:layout_height="8dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/progress_bar"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/progressbar"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progress_bar"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:text="请稍后，正在同步数据......" />
+
+</RelativeLayout>
