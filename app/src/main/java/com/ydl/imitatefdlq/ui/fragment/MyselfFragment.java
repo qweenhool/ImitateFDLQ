@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.ui.activity.OtherActivity;
+import com.ydl.imitatefdlq.ui.activity.PersonalInfoActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,14 +23,14 @@ import butterknife.Unbinder;
  * Created by qweenhool on 2017/8/4.
  */
 
-public class FourthFragment extends Fragment {
+public class MyselfFragment extends Fragment {
 
     @BindView(R.id.tv_nick_name)
     TextView tvNickName;
     @BindView(R.id.tv_autograph)
     TextView tvAutograph;
-    @BindView(R.id.ll_nick_name)
-    LinearLayout llNickName;
+    @BindView(R.id.ll_personal_info)
+    LinearLayout llPersonalInfo;
     @BindView(R.id.ll_online_collect_rents)
     LinearLayout llOnlineCollectRents;
     @BindView(R.id.ll_collect_account)
@@ -46,13 +47,10 @@ public class FourthFragment extends Fragment {
     LinearLayout llAbout;
     Unbinder unbinder;
 
-    public FourthFragment() {
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_fourth, container, false);
+        View view = inflater.inflate(R.layout.fragment_myself, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -63,12 +61,12 @@ public class FourthFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.ll_nick_name, R.id.ll_online_collect_rents, R.id.ll_collect_account, R.id.ll_setting, R.id.ll_child_account, R.id.ll_custom_service_center, R.id.ll_system_notice, R.id.ll_about})
+    @OnClick({R.id.ll_personal_info, R.id.ll_online_collect_rents, R.id.ll_collect_account, R.id.ll_setting, R.id.ll_child_account, R.id.ll_custom_service_center, R.id.ll_system_notice, R.id.ll_about})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
-            case R.id.ll_nick_name:
-                intent = new Intent(getContext(), OtherActivity.class);
+            case R.id.ll_personal_info:
+                intent = new Intent(getContext(), PersonalInfoActivity.class);
                 startActivity(intent);
                 break;
             case R.id.ll_online_collect_rents:

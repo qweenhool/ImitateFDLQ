@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="#efeff4">
+    android:background="#efeff4"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_home_page"
@@ -22,7 +22,7 @@
             android:gravity="center"
             android:textColor="#ffffff"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </android.support.v7.widget.Toolbar>
 
     <View
@@ -30,56 +30,67 @@
         android:layout_height="20dp"
         android:background="#5287E7" />
 
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="#5287E7"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/activity1back">
 
-        <Button
-            android:id="@+id/bt_uncollected"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:background="#00000000"
-            android:drawableTop="@drawable/selector_uncollected"
-            android:gravity="center"
-            android:text="未收账单"
-            android:textColor="@drawable/selector_text_color"
-            android:textSize="13sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
 
-        <Button
-            android:id="@+id/bt_unpayed"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#00000000"
-            android:drawableTop="@drawable/selector_unpayed"
-            android:gravity="center"
-            android:text="未付账单"
-            android:textColor="@drawable/selector_text_color"
-            android:textSize="13sp" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/bt_payed"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#00000000"
-            android:drawableTop="@drawable/selector_payed"
-            android:gravity="center"
-            android:text="到账账单"
-            android:textColor="@drawable/selector_text_color"
-            android:textSize="13sp" />
+            <Button
+                android:id="@+id/bt_uncollected"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:background="#00000000"
+                android:drawableTop="@drawable/selector_uncollected"
+                android:gravity="center"
+                android:text="未收账单"
+                android:textColor="@drawable/selector_text_color"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/bt_unpayed"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#00000000"
+                android:drawableTop="@drawable/selector_unpayed"
+                android:gravity="center"
+                android:text="未付账单"
+                android:textColor="@drawable/selector_text_color"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/bt_payed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#00000000"
+                android:drawableTop="@drawable/selector_payed"
+                android:gravity="center"
+                android:text="到账账单"
+                android:textColor="@drawable/selector_text_color"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_ad"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/activity1" />
+
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/iv_ad"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/ad" />
+
 
     <LinearLayout
         android:layout_width="match_parent"

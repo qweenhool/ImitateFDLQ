@@ -9,7 +9,7 @@ import android.view.KeyEvent;
 
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
-import com.ydl.imitatefdlq.ui.fragment.FourthFragment;
+import com.ydl.imitatefdlq.ui.fragment.MyselfFragment;
 import com.ydl.imitatefdlq.ui.fragment.HomePageFragment;
 import com.ydl.imitatefdlq.ui.fragment.HousePropertyFragment;
 import com.ydl.imitatefdlq.ui.fragment.ThirdFragment;
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         mFragments.add(new HomePageFragment());
         mFragments.add(new HousePropertyFragment());
         mFragments.add(new ThirdFragment());
-        mFragments.add(new FourthFragment());
+        mFragments.add(new MyselfFragment());
 
         mTabAdapter = new TabAdapter(getSupportFragmentManager(), mTabName, mFragments);
         //给ViewPager设置适配器

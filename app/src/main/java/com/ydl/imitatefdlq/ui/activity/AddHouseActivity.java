@@ -143,7 +143,7 @@ public class AddHouseActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fl_add_room_number, addRoomFragment, addRoomFragment.getClass().getSimpleName())
-                .add(R.id.fl_add_room_number, batchAddRoomFragment,batchAddRoomFragment.getClass().getSimpleName())
+                .add(R.id.fl_add_room_number, batchAddRoomFragment, batchAddRoomFragment.getClass().getSimpleName())
                 .hide(batchAddRoomFragment)
                 .show(addRoomFragment)
                 .commit();
@@ -391,9 +391,9 @@ public class AddHouseActivity extends AppCompatActivity {
                 opvHouseType.show();
                 break;
             case R.id.ll_house_photo:
-                if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
-                }else {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                } else {
                     initStyledDialog();
                 }
                 break;
@@ -406,7 +406,7 @@ public class AddHouseActivity extends AppCompatActivity {
 
     @OnClick(R.id.cb_add_house_number)
     public void onViewClicked() {
-        if(!isBatchAddRoom){
+        if (!isBatchAddRoom) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)//添加转换动画
@@ -414,7 +414,7 @@ public class AddHouseActivity extends AppCompatActivity {
                     .hide(addRoomFragment)
                     .commit();
             isBatchAddRoom = true;
-        }else {
+        } else {
             getSupportFragmentManager()
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
@@ -427,11 +427,11 @@ public class AddHouseActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case 1:
-                if(grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     initStyledDialog();
-                }else {
+                } else {
                     Toast.makeText(this, "你拒绝了该权限", Toast.LENGTH_SHORT).show();
                 }
                 break;
