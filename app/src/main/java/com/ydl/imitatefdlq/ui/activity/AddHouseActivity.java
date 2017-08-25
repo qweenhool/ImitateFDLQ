@@ -91,11 +91,11 @@ public class AddHouseActivity extends AppCompatActivity {
     private static final int TAKE_PHOTO = 1;
     private static final int CHOOSE_PHOTO = 2;
 
-    private OptionsPickerView opvHouseType;
     private String imagePath;
     private Uri imageUri;
     private String[] houseTypeArr;
     private List<String> housePhotoList;
+    private OptionsPickerView opvHouseType;
     private SQLiteOpenHelper helper;
     private SQLiteDatabase db;
     private AddRoomFragment addRoomFragment;
@@ -118,6 +118,7 @@ public class AddHouseActivity extends AppCompatActivity {
         initOptionPicker();
 
         initFragment(savedInstanceState);
+
 
     }
 
@@ -328,7 +329,6 @@ public class AddHouseActivity extends AppCompatActivity {
                 break;
         }
     }
-
 
     @TargetApi(19)
     private void handleImageOnKitKat(Intent data) {

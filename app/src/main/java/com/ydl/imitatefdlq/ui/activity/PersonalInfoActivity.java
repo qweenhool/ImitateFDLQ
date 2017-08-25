@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
+import com.ydl.imitatefdlq.util.ActivityCollector;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
 import butterknife.BindView;
@@ -81,7 +82,7 @@ public class PersonalInfoActivity extends BaseActivity {
             case R.id.ll_exit:
                 Intent intent = new Intent(this,LoginActivity.class);
                 startActivity(intent);
-                finish();
+                ActivityCollector.finishAll();
                 break;
         }
     }

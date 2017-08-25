@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.util.ActivityCollector;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 import butterknife.ButterKnife;
@@ -25,7 +26,7 @@ import butterknife.Unbinder;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private Unbinder mUnbinder;
-    private Toolbar toolbar;
+    protected Toolbar toolbar;
     private FrameLayout container;
     private TextView textView;
     // icon图标id
@@ -57,6 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         //将继承 getContentView() 得到的布局解析到 FrameLayout 里面
         LayoutInflater.from(BaseActivity.this).inflate(getContentView(), container);
         //这句话要放到这里才不会出错
+        ActivityCollector.addActivity(this);
         mUnbinder = ButterKnife.bind(this);
         init(savedInstanceState);
     }
@@ -113,6 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        ActivityCollector.removeActivity(this);
     }
 
 

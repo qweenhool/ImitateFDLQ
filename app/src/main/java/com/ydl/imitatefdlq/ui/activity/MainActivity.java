@@ -4,14 +4,15 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
 
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.adapter.TabAdapter;
-import com.ydl.imitatefdlq.ui.fragment.MyselfFragment;
+import com.ydl.imitatefdlq.ui.base.BaseActivity;
 import com.ydl.imitatefdlq.ui.fragment.HomePageFragment;
 import com.ydl.imitatefdlq.ui.fragment.HousePropertyFragment;
+import com.ydl.imitatefdlq.ui.fragment.MyselfFragment;
 import com.ydl.imitatefdlq.ui.fragment.ThirdFragment;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 import com.ydl.imitatefdlq.widget.NoScrollViewPager;
@@ -19,7 +20,7 @@ import com.ydl.imitatefdlq.widget.NoScrollViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private NoScrollViewPager mViewPager;
     private TabLayout mTabLayout;
@@ -28,11 +29,15 @@ public class MainActivity extends AppCompatActivity {
     private List<Fragment> mFragments;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+    protected int getContentView() {
+        return R.layout.activity_main;
+    }
 
+    @Override
+    protected void init(Bundle savedInstanceState) {
+
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+        toolbar.setVisibility(View.GONE);
         initView();
         initData();
 

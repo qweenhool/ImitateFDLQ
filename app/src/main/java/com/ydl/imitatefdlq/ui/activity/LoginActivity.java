@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -134,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
                                     //启动同步页面
                                     Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
                                     startActivity(intent);
-
+                                    finish();
                                     break;
                                 case 1://服务器异常
                                     StyledDialog.dismissLoading();
@@ -173,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         OkGo.getInstance().cancelTag(this);
+        Log.e(this.getClass().getSimpleName(), "onDestroy");
     }
 
     @Override

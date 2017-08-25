@@ -58,7 +58,8 @@
         <activity
             android:name=".ui.activity.RenterActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.LoginActivity">
+        <activity
+            android:name=".ui.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
