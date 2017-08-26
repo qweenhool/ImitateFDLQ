@@ -14,6 +14,10 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.ydl.imitatefdlq.entity.DaoMaster;
+import com.ydl.imitatefdlq.entity.DaoSession;
+
+import org.greenrobot.greendao.database.Database;
 
 /**
  * Created by qweenhool on 2017/8/15.
@@ -21,15 +25,31 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 
 public class AppApplication extends Application {
 
+    private DaoSession daoSession;
+
+    private static AppApplication instance;
+
+    public static AppApplication getInstance() {
+        return instance;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         //DialogUtil初始化
         StyledDialog.init(getApplicationContext());
         registerCallback();
         //OkGo初始化
         OkGo.getInstance().init(this);
+        //greenDAO初始化
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "House.db");
+        Database db = helper.getWritableDb();
+        daoSession = new DaoMaster(db).newSession();
+    }
+
+    public DaoSession getDaoSession() {
+        return daoSession;
     }
 
     static {

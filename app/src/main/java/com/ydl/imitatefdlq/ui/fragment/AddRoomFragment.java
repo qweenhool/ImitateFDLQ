@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.ydl.imitatefdlq.R;
 
@@ -45,7 +44,7 @@ public class AddRoomFragment extends Fragment {
 
     @OnClick(R.id.ll_add_room)
     public void onViewClicked() {
-        Toast.makeText(getActivity(), "ll_add_room被点击了", Toast.LENGTH_SHORT).show();
+
         final View view = LayoutInflater.from(getContext()).inflate(R.layout.item_remove_header,llContainer,false);
         //点击添加房号添加一个view
         llContainer.addView(view, llContainer.getChildCount());

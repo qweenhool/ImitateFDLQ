@@ -9,7 +9,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.interfaze.OnItemClickListener;
+
+import java.util.List;
 
 /**
  * Created by qweenhool on 2017/8/18.
@@ -18,7 +21,7 @@ import com.ydl.imitatefdlq.interfaze.OnItemClickListener;
 public class RoomNumberAdapter extends RecyclerView.Adapter<RoomNumberAdapter.RoomNumberViewHolder> {
 
     private Context mContext;
-    private String[] mRoomNumberArr;
+    private List<RoomBean> mRoomBeanList;
     private LayoutInflater mInflater;
     private OnItemClickListener listener;
 
@@ -26,9 +29,9 @@ public class RoomNumberAdapter extends RecyclerView.Adapter<RoomNumberAdapter.Ro
         this.listener = listener;
     }
 
-    public RoomNumberAdapter(Context context, String[] roomNumberArr) {
+    public RoomNumberAdapter(Context context, List<RoomBean> roomBeanList) {
         mContext = context;
-        mRoomNumberArr = roomNumberArr;
+        mRoomBeanList = roomBeanList;
         mInflater = LayoutInflater.from(mContext);
     }
 
@@ -40,15 +43,15 @@ public class RoomNumberAdapter extends RecyclerView.Adapter<RoomNumberAdapter.Ro
 
     @Override
     public void onBindViewHolder(RoomNumberViewHolder holder, int position) {
-        holder.roomNumber.setText(mRoomNumberArr[position]);
-        //租客页面还没搞定，先这样！
+        holder.roomNumber.setText(mRoomBeanList.get(position).getRoomName());
+        //Todo,租客页面还没搞定，先这样！
         holder.roomInfo.setText("闲置");
         holder.roomInfo.setTextColor(Color.parseColor("#ff8330"));
     }
 
     @Override
     public int getItemCount() {
-        return mRoomNumberArr.length;
+        return mRoomBeanList.size();
     }
 
 

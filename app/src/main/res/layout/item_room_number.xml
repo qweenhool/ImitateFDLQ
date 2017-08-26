@@ -25,6 +25,4 @@
         android:drawableRight="@drawable/ic_arrow"
         android:layout_alignParentRight="true"/>
 
-
-
 </RelativeLayout>

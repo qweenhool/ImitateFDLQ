@@ -3,12 +3,9 @@ package com.ydl.imitatefdlq.ui.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -42,8 +39,15 @@ import com.bigkoo.pickerview.OptionsPickerView;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyDialogListener;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
+import com.ydl.imitatefdlq.AppApplication;
 import com.ydl.imitatefdlq.R;
-import com.ydl.imitatefdlq.db.HouseDBHelper;
+import com.ydl.imitatefdlq.entity.DaoSession;
+import com.ydl.imitatefdlq.entity.HouseBean;
+import com.ydl.imitatefdlq.entity.HouseBeanDao;
+import com.ydl.imitatefdlq.entity.PictureBean;
+import com.ydl.imitatefdlq.entity.PictureBeanDao;
+import com.ydl.imitatefdlq.entity.RoomBean;
+import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.fragment.AddRoomFragment;
 import com.ydl.imitatefdlq.ui.fragment.BatchAddRoomFragment;
 import com.ydl.imitatefdlq.util.EditTextUtils;
@@ -54,7 +58,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,12 +102,19 @@ public class AddHouseActivity extends AppCompatActivity {
     private String[] houseTypeArr;
     private List<String> housePhotoList;
     private OptionsPickerView opvHouseType;
-    private SQLiteOpenHelper helper;
-    private SQLiteDatabase db;
     private AddRoomFragment addRoomFragment;
     private BatchAddRoomFragment batchAddRoomFragment;
     //批量添加房号开关
     private boolean isBatchAddRoom;
+
+    //每一个对象代表一张表
+    private HouseBeanDao houseBeanDao;
+    private RoomBeanDao roomBeanDao;
+    private PictureBeanDao pictureBeanDao;
+
+    private HouseBean houseBean;
+    private RoomBean roomBean;
+    private PictureBean pictureBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,8 +140,13 @@ public class AddHouseActivity extends AppCompatActivity {
         housePhotoList.add("拍照");
         housePhotoList.add("从手机相册选择");
 
-        helper = new HouseDBHelper(this, "House.db", null, 1);
-        db = helper.getWritableDatabase();
+        DaoSession daoSession = ((AppApplication) getApplication()).getDaoSession();
+        houseBeanDao = daoSession.getHouseBeanDao();
+        roomBeanDao = daoSession.getRoomBeanDao();
+        pictureBeanDao = daoSession.getPictureBeanDao();
+
+        houseBean = new HouseBean();
+        pictureBean = new PictureBean();
 
     }
 
@@ -200,6 +218,17 @@ public class AddHouseActivity extends AppCompatActivity {
             @Override
             public void onOptionsSelect(int options1, int option2, int options3, View v) {
                 tvHouseType.setText(houseTypeArr[options1]);
+                if (houseTypeArr[options1].equals("住宅/小区/公寓")) {
+                    houseBean.setHouseType(1);
+                }else if(houseTypeArr[options1].equals("商铺/门市房")){
+                    houseBean.setHouseType(2);
+                }else if(houseTypeArr[options1].equals("厂房/车间")){
+                    houseBean.setHouseType(3);
+                }else if(houseTypeArr[options1].equals("仓库/车库/停车位")){
+                    houseBean.setHouseType(4);
+                }else if(houseTypeArr[options1].equals("写字楼/办公室")){
+                    houseBean.setHouseType(5);
+                }
             }
         })
                 .setTextColorCenter(Color.parseColor("#5287E7"))//滚轮文字颜色设置
@@ -251,8 +280,9 @@ public class AddHouseActivity extends AppCompatActivity {
                 saveData();
                 //来个ios样式的loading
                 StyledDialog.buildLoading("请稍后").show();
+                //Todo,此处应该同步服务器
                 Intent roomNumberIntent = new Intent(this, RoomNumberActivity.class);
-                roomNumberIntent.putExtra("last_index", "last_index");
+                roomNumberIntent.putExtra("house_id", houseBean.getId());
                 startActivity(roomNumberIntent);
                 finish();
             }
@@ -262,34 +292,41 @@ public class AddHouseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //将用户保存的数据存到数据库中
+    //将房产数据存到数据库中
     private void saveData() {
-        ContentValues values = new ContentValues();
-        values.put("name", etAddHouseName.getText().toString());
-        values.put("type", tvHouseType.getText().toString());
-        if (imagePath == null) {
-            values.put("photo", "");
-        } else {
-            values.put("photo", imagePath);
-        }
-        values.put("account", "");
 
+        //往house表中存数据
+        String uuid = UUID.randomUUID().toString();
+        houseBean.setId(uuid);
+        houseBean.setDataUpload(0);
+        houseBean.setHouseName(etAddHouseName.getText().toString());
+        houseBean.setOrderNumber(new Date());
+        houseBean.setUseFeeTemplate(1);
+        houseBeanDao.insert(houseBean);
+        //Todo,往picture表中存数据
+
+        //往room表中存数据
+        //第一种情况，默认添加房号
         LinearLayout container = (LinearLayout) getSupportFragmentManager()
                 .findFragmentByTag(AddRoomFragment.class.getSimpleName())
                 .getView()
                 .findViewById(R.id.ll_container);
-        StringBuilder sb = new StringBuilder();
         EditText et;
+        int n = 1;
         for (int i = 0; i < container.getChildCount(); i++) {
-            et = (EditText) container.getChildAt(i).findViewById(R.id.et_add_room_number);
+            et = (EditText) container.getChildAt(container.getChildCount()-i-1).findViewById(R.id.et_add_room_number);
             if (!TextUtils.isEmpty(et.getText().toString().trim())) {
-                sb.append(et.getText().toString().trim() + ",");
-            } else {
-                sb.append("");
+                roomBean = new RoomBean();
+                roomBean.setHouseId(uuid);
+                roomBean.setDataUpload(0);
+                roomBean.setId(UUID.randomUUID().toString());
+                roomBean.setRoomName(et.getText().toString().trim());
+                roomBean.setOrderNumber(n++);
+                roomBeanDao.insert(roomBean);
             }
         }
-        values.put("room_number", sb.toString());
-        db.insert("house", null, values);
+        //Todo,第二种情况，批量添加房号
+
     }
 
     @Override

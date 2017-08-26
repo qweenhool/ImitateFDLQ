@@ -1,73 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<com.mcxtzhang.swipemenulib.SwipeMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:clickable="true"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_house_item"
     android:layout_width="match_parent"
-    android:layout_height="70dp">
+    android:layout_height="70dp"
+    android:background="@drawable/selector_ll_text_color">
 
-    <RelativeLayout
-        android:id="@+id/rl_house_item"
-        android:layout_width="match_parent"
+    <com.ydl.imitatefdlq.widget.RoundImageView
+        android:id="@+id/riv_house_photo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/room_info" />
+
+    <TextView
+        android:id="@+id/tv_house_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_ll_text_color">
+        android:layout_alignTop="@+id/riv_house_photo"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/riv_house_photo"
+        android:layout_toRightOf="@+id/riv_house_photo"
+        android:maxLength="40"
+        android:singleLine="true"
+        android:text="盛世新都"
+        android:textColor="#000000" />
 
-        <com.ydl.imitatefdlq.widget.RoundImageView
-            android:id="@+id/riv_house_photo"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/room_info" />
 
-        <TextView
-            android:id="@+id/tv_house_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/riv_house_photo"
-            android:layout_marginTop="5dp"
-            android:layout_toEndOf="@+id/riv_house_photo"
-            android:layout_toRightOf="@+id/riv_house_photo"
-            android:maxLength="40"
-            android:singleLine="true"
-            android:text="盛世新都"
-            android:textColor="#000000" />
+    <LinearLayout
+        android:id="@+id/ll_house_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/riv_house_photo"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/riv_house_photo"
+        android:layout_toRightOf="@+id/riv_house_photo"
+        android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/tv_house_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/riv_house_photo"
-            android:layout_marginBottom="5dp"
-            android:layout_toEndOf="@+id/riv_house_photo"
-            android:layout_toRightOf="@+id/riv_house_photo"
-            android:text="商铺/门市房"
+            android:text="共"
             android:textColor="#81838e"
             android:textSize="12sp" />
 
-        <ImageView
-            android:id="@+id/iv_edit"
+        <TextView
+            android:id="@+id/tv_total_room_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_arrow" />
+            android:text="3"
+            android:textColor="#FF8330"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="套住宅,闲置"
+            android:textColor="#81838e"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_idle_room_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            android:textColor="#FF4b5e"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="套"
+            android:textColor="#81838e"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_no_room_yet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/riv_house_photo"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/riv_house_photo"
+        android:layout_toRightOf="@+id/riv_house_photo"
+        android:text="暂未添加房号"
+        android:textColor="#81838e"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="#d7d7db" />
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/iv_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_arrow" />
 
-    <Button
-        android:id="@+id/btn_delete"
-        android:layout_width="80dp"
-        android:layout_height="match_parent"
-        android:background="#FE3B30"
-        android:text="删除"
-        android:textSize="16sp"
-        android:textColor="@android:color/white"/>
-</com.mcxtzhang.swipemenulib.SwipeMenuLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#d7d7db" />
+</RelativeLayout>
+
