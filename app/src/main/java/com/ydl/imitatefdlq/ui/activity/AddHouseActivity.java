@@ -100,8 +100,8 @@ public class AddHouseActivity extends AppCompatActivity {
     private String imagePath;
     private Uri imageUri;
     private String[] houseTypeArr;
-    private List<String> housePhotoList;
     private OptionsPickerView opvHouseType;
+    private List<String> housePhotoList;
     private AddRoomFragment addRoomFragment;
     private BatchAddRoomFragment batchAddRoomFragment;
     //批量添加房号开关
@@ -218,17 +218,6 @@ public class AddHouseActivity extends AppCompatActivity {
             @Override
             public void onOptionsSelect(int options1, int option2, int options3, View v) {
                 tvHouseType.setText(houseTypeArr[options1]);
-                if (houseTypeArr[options1].equals("住宅/小区/公寓")) {
-                    houseBean.setHouseType(1);
-                }else if(houseTypeArr[options1].equals("商铺/门市房")){
-                    houseBean.setHouseType(2);
-                }else if(houseTypeArr[options1].equals("厂房/车间")){
-                    houseBean.setHouseType(3);
-                }else if(houseTypeArr[options1].equals("仓库/车库/停车位")){
-                    houseBean.setHouseType(4);
-                }else if(houseTypeArr[options1].equals("写字楼/办公室")){
-                    houseBean.setHouseType(5);
-                }
             }
         })
                 .setTextColorCenter(Color.parseColor("#5287E7"))//滚轮文字颜色设置
@@ -300,6 +289,7 @@ public class AddHouseActivity extends AppCompatActivity {
         houseBean.setId(uuid);
         houseBean.setDataUpload(0);
         houseBean.setHouseName(etAddHouseName.getText().toString());
+        houseBean.setHouseType(tvHouseType.getText().toString());
         houseBean.setOrderNumber(new Date());
         houseBean.setUseFeeTemplate(1);
         houseBeanDao.insert(houseBean);

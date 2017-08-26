@@ -18,7 +18,6 @@ import com.ydl.imitatefdlq.adapter.RoomNumberAdapter;
 import com.ydl.imitatefdlq.entity.DaoSession;
 import com.ydl.imitatefdlq.entity.HouseBean;
 import com.ydl.imitatefdlq.entity.HouseBeanDao;
-import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
@@ -62,10 +61,6 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
     private RoomBeanDao roomBeanDao;
     private PictureBeanDao pictureBeanDao;
 
-    private HouseBean houseBean;
-    private RoomBean roomBean;
-    private PictureBean pictureBean;
-
     private List<RoomBean> roomBeanList;
     private String houseId;
 
@@ -96,10 +91,6 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
         roomBeanDao = daoSession.getRoomBeanDao();
         pictureBeanDao = daoSession.getPictureBeanDao();
 
-        houseBean = new HouseBean();
-        roomBean = new RoomBean();
-        pictureBean = new PictureBean();
-
         Intent intent = getIntent();
         houseId = intent.getStringExtra("house_id");
 
@@ -110,23 +101,7 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
             //设置房产名字
             tvHouseName.setText(houseBeanList.get(0).getHouseName());
             //设置房产类型
-            switch (houseBeanList.get(0).getHouseType()) {
-                case 1:
-                    tvHouseType.setText("住宅/小区/公寓");
-                    break;
-                case 2:
-                    tvHouseType.setText("商铺/门市房");
-                    break;
-                case 3:
-                    tvHouseType.setText("厂房/车间");
-                    break;
-                case 4:
-                    tvHouseType.setText("仓库/车库/停车位");
-                    break;
-                case 5:
-                    tvHouseType.setText("写字楼/办公室");
-                    break;
-            }
+            tvHouseType.setText(houseBeanList.get(0).getHouseType());
             //Todo,设置房产照片
 
             //显示房间列表
@@ -156,6 +131,22 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
                 llHint.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //从修改页面返回，更新数据
+        List<HouseBean> houseBeanList = houseBeanDao.queryBuilder()
+                .where(HouseBeanDao.Properties.Id.eq(houseId))
+                .list();
+        //设置房产名字
+        tvHouseName.setText(houseBeanList.get(0).getHouseName());
+        //设置房产类型
+        tvHouseType.setText(houseBeanList.get(0).getHouseType());
+        //Todo 设置房产照片
+
     }
 
     @Override

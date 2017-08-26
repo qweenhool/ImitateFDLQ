@@ -37,9 +37,7 @@ import com.ydl.imitatefdlq.adapter.HousePropertyAdapter;
 import com.ydl.imitatefdlq.entity.DaoSession;
 import com.ydl.imitatefdlq.entity.HouseBean;
 import com.ydl.imitatefdlq.entity.HouseBeanDao;
-import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
-import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.activity.AddHouseActivity;
 import com.ydl.imitatefdlq.ui.activity.RoomNumberActivity;
@@ -86,10 +84,6 @@ public class HousePropertyFragment extends Fragment {
     private RoomBeanDao roomBeanDao;
     private PictureBeanDao pictureBeanDao;
 
-    private HouseBean houseBean;
-    private RoomBean roomBean;
-    private PictureBean pictureBean;
-
     private List<HouseBean> houseBeanList;
 
     @Nullable
@@ -113,10 +107,6 @@ public class HousePropertyFragment extends Fragment {
         houseBeanDao = daoSession.getHouseBeanDao();
         roomBeanDao = daoSession.getRoomBeanDao();
         pictureBeanDao = daoSession.getPictureBeanDao();
-
-        houseBean = new HouseBean();
-        roomBean = new RoomBean();
-        pictureBean = new PictureBean();
 
     }
 

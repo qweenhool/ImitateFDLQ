@@ -16,11 +16,11 @@ public class HouseBean {
     private int dataUpload;
     private String houseName;
     private Date orderNumber;
-    private int houseType;
+    private String houseType;
     private int useFeeTemplate;
-    @Generated(hash = 947109677)
+    @Generated(hash = 554940491)
     public HouseBean(String id, int dataUpload, String houseName, Date orderNumber,
-            int houseType, int useFeeTemplate) {
+            String houseType, int useFeeTemplate) {
         this.id = id;
         this.dataUpload = dataUpload;
         this.houseName = houseName;
@@ -55,10 +55,10 @@ public class HouseBean {
     public void setOrderNumber(Date orderNumber) {
         this.orderNumber = orderNumber;
     }
-    public int getHouseType() {
+    public String getHouseType() {
         return this.houseType;
     }
-    public void setHouseType(int houseType) {
+    public void setHouseType(String houseType) {
         this.houseType = houseType;
     }
     public int getUseFeeTemplate() {
@@ -67,4 +67,5 @@ public class HouseBean {
     public void setUseFeeTemplate(int useFeeTemplate) {
         this.useFeeTemplate = useFeeTemplate;
     }
+    
 }
