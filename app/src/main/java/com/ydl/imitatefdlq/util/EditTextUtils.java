@@ -3,6 +3,7 @@ package com.ydl.imitatefdlq.util;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -50,5 +51,25 @@ public class EditTextUtils {
                 }
             }
         });
+    }
+    //是否隐藏软键盘
+    public static boolean isShouldHideInput(View view, MotionEvent event) {
+        if (view != null && (view instanceof EditText)) {
+            int[] leftTop = {0, 0};
+            //获取输入框当前的location位置
+            view.getLocationInWindow(leftTop);
+            int left = leftTop[0];
+            int top = leftTop[1];
+            int bottom = top + view.getHeight();
+            int right = left + view.getWidth();
+            if (event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom) {
+                //点击的事EditText区域，保留点击事件
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

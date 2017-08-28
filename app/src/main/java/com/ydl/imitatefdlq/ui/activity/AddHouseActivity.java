@@ -26,7 +26,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -50,12 +52,15 @@ import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.fragment.AddRoomFragment;
 import com.ydl.imitatefdlq.ui.fragment.BatchAddRoomFragment;
+import com.ydl.imitatefdlq.util.BitmapUtil;
 import com.ydl.imitatefdlq.util.EditTextUtils;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -107,6 +112,12 @@ public class AddHouseActivity extends AppCompatActivity {
     //批量添加房号开关
     private boolean isBatchAddRoom;
 
+    private File xBitmapCache;
+    private File pictures;
+    private File file;
+    private String picUUID;
+
+
     //每一个对象代表一张表
     private HouseBeanDao houseBeanDao;
     private RoomBeanDao roomBeanDao;
@@ -132,7 +143,6 @@ public class AddHouseActivity extends AppCompatActivity {
 
         initFragment(savedInstanceState);
 
-
     }
 
     private void initData() {
@@ -140,11 +150,53 @@ public class AddHouseActivity extends AppCompatActivity {
         housePhotoList.add("拍照");
         housePhotoList.add("从手机相册选择");
 
+        //创建缓存目录 cache/xBitmapCache
+        xBitmapCache = new File(getExternalCacheDir().getPath() + "/xBitmapCache");
+        if (!xBitmapCache.exists()) {
+            xBitmapCache.mkdirs();
+        }
+        //创建缓存目录 cache/.nomedia
+        File noMedia = new File(getExternalCacheDir().getPath() + "/.nomedia");
+        if (!noMedia.exists()) {
+            try {
+                noMedia.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        //创建缓存目录 files/DCIM
+        File dcim = new File(getExternalFilesDir(null).getPath() + "/DCIM");
+        if (!dcim.exists()) {
+            dcim.mkdirs();
+        }
+        //创建缓存目录 files/Pictures
+        pictures = new File(getExternalFilesDir(null).getPath() + "/Pictures");
+        if (!pictures.exists()) {
+            pictures.mkdirs();
+        }
+
+        //原始照片，初始化imageUri
+        file = new File(pictures, "fdlq.jpg");
+        try {
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (Build.VERSION.SDK_INT >= 24) {
+            imageUri = FileProvider.getUriForFile(AddHouseActivity.this,
+                    "com.ydl.imitatefdlq.fileprovider", file);
+        } else {
+            imageUri = Uri.fromFile(file);
+        }
+        //获取数据库文件
         DaoSession daoSession = ((AppApplication) getApplication()).getDaoSession();
         houseBeanDao = daoSession.getHouseBeanDao();
         roomBeanDao = daoSession.getRoomBeanDao();
         pictureBeanDao = daoSession.getPictureBeanDao();
-
+        //获取bean对象
         houseBean = new HouseBean();
         pictureBean = new PictureBean();
 
@@ -173,34 +225,28 @@ public class AddHouseActivity extends AppCompatActivity {
             @Override
             public void onItemClick(CharSequence charSequence, int i) {
                 if ("拍照".equals(charSequence)) {
-                    File file = new File(getExternalCacheDir(), "temp_house_image.jpg");
-
-                    try {
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                        file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (ContextCompat.checkSelfPermission(AddHouseActivity.this,
+                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                        ActivityCompat.requestPermissions(AddHouseActivity.this,
+                                new String[]{Manifest.permission.CAMERA}, 1);
+                    } else {//同意拍照就打开摄像头
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                        startActivityForResult(intent, TAKE_PHOTO);
                     }
-                    if (Build.VERSION.SDK_INT >= 24) {
-                        imageUri = FileProvider.getUriForFile(AddHouseActivity.this,
-                                "com.ydl.imitatefdlq.fileprovider", file);
-                    } else {
-                        imageUri = Uri.fromFile(file);
-                    }
-                    Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                    startActivityForResult(intent, TAKE_PHOTO);
-
                 } else if ("从手机相册选择".equals(charSequence)) {
-                    Intent intent = new Intent("android.intent.action.GET_CONTENT");
-                    intent.setType("image/*");
-                    startActivityForResult(intent, CHOOSE_PHOTO);
-
+                    if (ContextCompat.checkSelfPermission(AddHouseActivity.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                        ActivityCompat.requestPermissions(AddHouseActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                    } else {//同意就打开相册
+                        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                        intent.setType("image/*");
+                        startActivityForResult(intent, CHOOSE_PHOTO);
+                    }
                 } else if ("删除".equals(charSequence)) {
                     ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
-//                    housePhotoArr = new String[]{"拍照", "从手机相册选择"};
+                    picUUID = null;
                     if (housePhotoList.contains("删除")) {
                         housePhotoList.remove("删除");
                     }
@@ -293,8 +339,17 @@ public class AddHouseActivity extends AppCompatActivity {
         houseBean.setOrderNumber(new Date());
         houseBean.setUseFeeTemplate(1);
         houseBeanDao.insert(houseBean);
-        //Todo,往picture表中存数据
-
+        //往picture表中存数据
+        if (picUUID != null) {//不为空说明用户点击了确定按钮或者从图库选择了一张图片
+            pictureBean.setId(UUID.randomUUID().toString());
+            pictureBean.setForeignId(uuid);
+            pictureBean.setPath(pictures.getAbsolutePath() + "/" + picUUID + ".jpg");
+            pictureBean.setOrderNumber(new Date());
+            pictureBean.setDataUpload(0);
+            pictureBean.setUploadUrl(null);//Todo 上传服务器地址
+            pictureBean.setSortNo(0);
+            pictureBeanDao.insert(pictureBean);
+        }
         //往room表中存数据
         //第一种情况，默认添加房号
         LinearLayout container = (LinearLayout) getSupportFragmentManager()
@@ -304,7 +359,7 @@ public class AddHouseActivity extends AppCompatActivity {
         EditText et;
         int n = 1;
         for (int i = 0; i < container.getChildCount(); i++) {
-            et = (EditText) container.getChildAt(container.getChildCount()-i-1).findViewById(R.id.et_add_room_number);
+            et = (EditText) container.getChildAt(container.getChildCount() - i - 1).findViewById(R.id.et_add_room_number);
             if (!TextUtils.isEmpty(et.getText().toString().trim())) {
                 roomBean = new RoomBean();
                 roomBean.setHouseId(uuid);
@@ -325,20 +380,21 @@ public class AddHouseActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    try {
-                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                        ivHousePhoto.setImageBitmap(bitmap);
-                        if (!housePhotoList.contains("删除")) {
-                            housePhotoList.add("删除");
-                        }
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                    StyledDialog.buildLoading("请稍后").show();
+                    //Todo 同时在Android/data/包名/cache/xBitmapCache下也缓存一张压缩过的（一长串数字.0），有何用？
+                    picUUID = UUID.randomUUID().toString();
+                    File compressedFile = BitmapUtil.saveBitmapToFile(file, pictures.getPath() + "/" + picUUID + ".jpg");
+                    Bitmap bitmap = BitmapFactory.decodeFile(compressedFile.getAbsolutePath());
+                    ivHousePhoto.setImageBitmap(bitmap);
+                    if (!housePhotoList.contains("删除")) {
+                        housePhotoList.add("删除");
                     }
-
+                    StyledDialog.dismissLoading();
                 }
                 break;
             case CHOOSE_PHOTO:
                 if (resultCode == RESULT_OK) {
+                    StyledDialog.buildLoading("请稍后").show();
                     // 判断手机系统版本号
                     if (Build.VERSION.SDK_INT >= 19) {
                         // 4.4及以上系统使用这个方法处理图片
@@ -350,6 +406,10 @@ public class AddHouseActivity extends AppCompatActivity {
                     if (!housePhotoList.contains("删除")) {
                         housePhotoList.add("删除");
                     }
+                    picUUID = UUID.randomUUID().toString();
+                    //把imagePath所在的图片复制到Android/data/包名/files/Pictures目录下并更名为pictures.getPath() + "/" + picUUID + ".jpg"
+                    copyFile(imagePath, pictures.getPath() + "/" + picUUID + ".jpg");
+                    StyledDialog.dismissLoading();
                 }
                 break;
             default:
@@ -411,6 +471,28 @@ public class AddHouseActivity extends AppCompatActivity {
         return path;
     }
 
+    public void copyFile(String srcPath, String desPath) {
+        try {
+            int byteSum = 0;
+            int byteRead = 0;
+            File srcFile = new File(srcPath);
+            if (srcFile.exists()) { //文件存在时
+                InputStream inStream = new FileInputStream(srcPath); //读入原文件,读入到代码中
+                FileOutputStream fs = new FileOutputStream(desPath);
+                byte[] buffer = new byte[1444];
+                while ((byteRead = inStream.read(buffer)) != -1) {
+                    byteSum += byteRead; //字节数 文件大小
+                    fs.write(buffer, 0, byteRead);
+                }
+                inStream.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+    }
+
     @OnClick({R.id.ll_house_type, R.id.ll_house_photo, R.id.ll_receive_account})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -418,11 +500,7 @@ public class AddHouseActivity extends AppCompatActivity {
                 opvHouseType.show();
                 break;
             case R.id.ll_house_photo:
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                } else {
-                    initStyledDialog();
-                }
+                initStyledDialog();
                 break;
             case R.id.ll_receive_account:
                 Intent accountIntent = new Intent(this, SelectAccountActivity.class);
@@ -457,12 +535,41 @@ public class AddHouseActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    initStyledDialog();
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                    startActivityForResult(intent, TAKE_PHOTO);
+                } else {
+                    Toast.makeText(this, "你拒绝了该权限", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case 2:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                    intent.setType("image/*");
+                    startActivityForResult(intent, CHOOSE_PHOTO);
                 } else {
                     Toast.makeText(this, "你拒绝了该权限", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if (EditTextUtils.isShouldHideInput(view, ev)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+            return super.dispatchTouchEvent(ev);
+        }
+        if (getWindow().superDispatchTouchEvent(ev)) {
+            return true;
+        }
+        return onTouchEvent(ev);
     }
 }

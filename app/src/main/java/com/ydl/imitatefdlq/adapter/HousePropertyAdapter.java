@@ -1,8 +1,8 @@
 package com.ydl.imitatefdlq.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,7 @@ import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.entity.DaoSession;
 import com.ydl.imitatefdlq.entity.HouseBean;
 import com.ydl.imitatefdlq.entity.HouseBeanDao;
+import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
@@ -56,8 +57,13 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
     @Override
     public void onBindViewHolder(HouseViewHolder holder, int position) {
 
-        //Todo 设置房产照片
-
+        //设置房产照片
+        List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                .where(PictureBeanDao.Properties.ForeignId.eq(mHouseBeanList.get(position).getId()))
+                .list();
+        if (pictureBeanList.size() != 0) {//有房产照片的话就设置照片
+            holder.housePhoto.setImageURI(Uri.parse(pictureBeanList.get(0).getPath()));
+        }
         //设置房产名
         holder.houseName.setText(mHouseBeanList.get(position).getHouseName());
 
@@ -65,14 +71,13 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
         List<RoomBean> roomBeanList = roomBeanDao.queryBuilder()
                 .where(RoomBeanDao.Properties.HouseId.eq(mHouseBeanList.get(position).getId()))
                 .list();
-        Log.e(this.getClass().getSimpleName(), "something"+roomBeanList.size());
-        if(roomBeanList.size()!=0){
+        if (roomBeanList.size() != 0) {
             //Todo 闲置功能尚待开发
-            holder.totalRoomNumber.setText(roomBeanList.size()+"");
-            holder.idleRoomNumber.setText(roomBeanList.size()+"");
+            holder.totalRoomNumber.setText(roomBeanList.size() + "");
+            holder.idleRoomNumber.setText(roomBeanList.size() + "");
             holder.llHouseInfo.setVisibility(View.VISIBLE);
             holder.tvHouseInfo.setVisibility(View.GONE);
-        }else {
+        } else {
             holder.llHouseInfo.setVisibility(View.GONE);
             holder.tvHouseInfo.setVisibility(View.VISIBLE);
         }
@@ -84,8 +89,7 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
     }
 
 
-
-    class HouseViewHolder extends RecyclerView.ViewHolder{
+    class HouseViewHolder extends RecyclerView.ViewHolder {
         private RoundImageView housePhoto;
         private TextView houseName;
         private LinearLayout llHouseInfo;

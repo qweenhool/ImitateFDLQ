@@ -86,9 +86,9 @@ public class LoginActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
             } else {
-                login();
-//                Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
-//                startActivity(intent);
+//                login();
+                Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
+                startActivity(intent);
             }
         } else {
             Toast.makeText(this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();

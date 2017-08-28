@@ -1,8 +1,10 @@
 package com.ydl.imitatefdlq.entity;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+
+import java.util.Date;
 
 /**
  * Created by qweenhool on 2017/8/26.
@@ -13,12 +15,12 @@ public class PictureBean {
     private String id;
     private String path;
     private String foreignId;
-    private int orderNumber;
+    private Date orderNumber;
     private int dataUpload;
     private String uploadUrl;
     private int sortNo;
-    @Generated(hash = 855511772)
-    public PictureBean(String id, String path, String foreignId, int orderNumber,
+    @Generated(hash = 1789407090)
+    public PictureBean(String id, String path, String foreignId, Date orderNumber,
             int dataUpload, String uploadUrl, int sortNo) {
         this.id = id;
         this.path = path;
@@ -49,10 +51,10 @@ public class PictureBean {
     public void setForeignId(String foreignId) {
         this.foreignId = foreignId;
     }
-    public int getOrderNumber() {
+    public Date getOrderNumber() {
         return this.orderNumber;
     }
-    public void setOrderNumber(int orderNumber) {
+    public void setOrderNumber(Date orderNumber) {
         this.orderNumber = orderNumber;
     }
     public int getDataUpload() {

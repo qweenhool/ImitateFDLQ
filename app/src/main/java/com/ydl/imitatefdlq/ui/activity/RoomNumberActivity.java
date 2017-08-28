@@ -1,6 +1,7 @@
 package com.ydl.imitatefdlq.ui.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import com.ydl.imitatefdlq.adapter.RoomNumberAdapter;
 import com.ydl.imitatefdlq.entity.DaoSession;
 import com.ydl.imitatefdlq.entity.HouseBean;
 import com.ydl.imitatefdlq.entity.HouseBeanDao;
+import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
@@ -102,8 +104,13 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
             tvHouseName.setText(houseBeanList.get(0).getHouseName());
             //设置房产类型
             tvHouseType.setText(houseBeanList.get(0).getHouseType());
-            //Todo,设置房产照片
-
+            //设置房产照片:根据picture表中的foreignId查到
+            List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                    .where(PictureBeanDao.Properties.ForeignId.eq(houseBeanList.get(0).getId()))
+                    .list();
+            if (pictureBeanList.size() != 0) {
+                rivHousePhoto.setImageURI(Uri.parse(pictureBeanList.get(0).getPath()));
+            }
             //显示房间列表
             roomBeanList = roomBeanDao.queryBuilder()
                     .where(RoomBeanDao.Properties.HouseId.eq(houseId))
@@ -113,7 +120,7 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
                 adapter = new RoomNumberAdapter(this, roomBeanList);
                 adapter.setOnItemClickListener(this);
                 rvRoomNumber.setLayoutManager(new LinearLayoutManager(this));
-                rvRoomNumber.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+                rvRoomNumber.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
                 rvRoomNumber.setAdapter(adapter);
 
                 refreshLayoutRoomNumber.setVisibility(View.VISIBLE);
@@ -145,8 +152,15 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
         tvHouseName.setText(houseBeanList.get(0).getHouseName());
         //设置房产类型
         tvHouseType.setText(houseBeanList.get(0).getHouseType());
-        //Todo 设置房产照片
-
+        //设置房产照片
+        List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                .where(PictureBeanDao.Properties.ForeignId.eq(houseBeanList.get(0).getId()))
+                .list();
+        if (pictureBeanList.size() != 0) {
+            rivHousePhoto.setImageURI(Uri.parse(pictureBeanList.get(0).getPath()));
+        } else {
+            rivHousePhoto.setImageResource(R.drawable.room_info);
+        }
     }
 
     @Override

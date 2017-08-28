@@ -37,6 +37,7 @@ import com.ydl.imitatefdlq.adapter.HousePropertyAdapter;
 import com.ydl.imitatefdlq.entity.DaoSession;
 import com.ydl.imitatefdlq.entity.HouseBean;
 import com.ydl.imitatefdlq.entity.HouseBeanDao;
+import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.activity.AddHouseActivity;
@@ -192,11 +193,21 @@ public class HousePropertyFragment extends Fragment {
                     StyledDialog.buildIosAlert("删除确认", "删除房产将一并删除其所有的房号,租客及账单，您确定要删除吗?", new MyDialogListener() {
                         @Override
                         public void onFirst() {
-                            //Todo 联网服务器删除数据
+                            //Todo 联网删除服务器数据
+
+                            //删除house表的这一行数据
                             int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
                             houseBeanDao.deleteByKey(houseBeanList.get(adapterPosition).getId());
+                            //删除picture表的这一行数据
+                            List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                                    .where(PictureBeanDao.Properties.ForeignId.
+                                            eq(houseBeanList.get(adapterPosition).getId()))
+                                    .list();
+                            pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());
+                            //更新传入adapter的数据集
                             houseBeanList.remove(adapterPosition);
-                            if (houseBeanList.size() == 0) {//houseBeanList里面没有数据就显示初始界面
+                            //houseBeanList里面没有数据就显示初始界面
+                            if (houseBeanList.size() == 0) {
                                 llHouseList.setVisibility(View.GONE);
                                 ivBg.setVisibility(View.VISIBLE);
                                 llAddHouseButtonBelow.setVisibility(View.VISIBLE);
