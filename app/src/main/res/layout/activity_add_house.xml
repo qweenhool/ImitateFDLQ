@@ -156,7 +156,8 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginRight="15dp"
-                        android:src="@drawable/ic_add_photo" />
+                        android:src="@drawable/ic_add_photo"
+                        app:borderRadius="30"/>
                 </LinearLayout>
 
                 <View

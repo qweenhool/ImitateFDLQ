@@ -1,6 +1,7 @@
 package com.ydl.imitatefdlq.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -12,6 +13,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+import com.ydl.imitatefdlq.R;
+
 /**
  * Created by qweenhool on 2017/8/15.
  * http://www.jianshu.com/p/626dbd93207d
@@ -21,7 +24,7 @@ import android.util.AttributeSet;
 public class RoundImageView extends android.support.v7.widget.AppCompatImageView {
 
     //圆角大小，默认为10
-    private int mBorderRadius = 30;
+    private int mBorderRadius = 10;
 
     private Paint mPaint;
 
@@ -42,6 +45,17 @@ public class RoundImageView extends android.support.v7.widget.AppCompatImageView
     public RoundImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RoundImageView, defStyleAttr, 0);
+        for (int i = 0; i < typedArray.getIndexCount(); i++) {
+            int index = typedArray.getIndex(i);
+            switch (index) {
+                case R.styleable.RoundImageView_borderRadius:
+                    mBorderRadius = typedArray.getInt(index, 10);
+                    break;
+            }
+        }
+        typedArray.recycle();
+
         mMatrix = new Matrix();
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -50,14 +64,13 @@ public class RoundImageView extends android.support.v7.widget.AppCompatImageView
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (getDrawable() == null){
+        if (getDrawable() == null) {
             return;
         }
         Bitmap bitmap = drawableToBitamp(getDrawable());
         mBitmapShader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
         float scale = 1.0f;
-        if (!(bitmap.getWidth() == getWidth() && bitmap.getHeight() == getHeight()))
-        {
+        if (!(bitmap.getWidth() == getWidth() && bitmap.getHeight() == getHeight())) {
             // 如果图片的宽或者高与view的宽高不匹配，计算出需要缩放的比例；缩放后的图片的宽高，一定要大于我们view的宽高；所以我们这里取大值；
             scale = Math.max(getWidth() * 1.0f / bitmap.getWidth(),
                     getHeight() * 1.0f / bitmap.getHeight());
@@ -68,15 +81,13 @@ public class RoundImageView extends android.support.v7.widget.AppCompatImageView
         mBitmapShader.setLocalMatrix(mMatrix);
         // 设置shader
         mPaint.setShader(mBitmapShader);
-        canvas.drawRoundRect(new RectF(0,0,getWidth(),getHeight()), mBorderRadius, mBorderRadius,
+        canvas.drawRoundRect(new RectF(0, 0, getWidth(), getHeight()), mBorderRadius, mBorderRadius,
                 mPaint);
     }
 
 
-    private Bitmap drawableToBitamp(Drawable drawable)
-    {
-        if (drawable instanceof BitmapDrawable)
-        {
+    private Bitmap drawableToBitamp(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bd = (BitmapDrawable) drawable;
             return bd.getBitmap();
         }
