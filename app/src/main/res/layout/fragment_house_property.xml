@@ -32,33 +32,31 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <LinearLayout
-            android:id="@+id/ll_add_house_button_above"
+        <RelativeLayout
+            android:id="@+id/rl_add_house_button_above"
             android:layout_width="match_parent"
             android:layout_height="45dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/selector_ll_text_color"
-            android:clickable="true"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:src="@drawable/ic_add_circle" />
+            android:clickable="true">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableLeft="@drawable/ic_add_circle"
+                android:drawablePadding="5dp"
+                android:gravity="center"
                 android:text="添加房产"
                 android:textColor="#5687e7" />
-        </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="10dp"
-            android:background="#d9d9d9" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="#d9d9d9" />
+
+        </RelativeLayout>
 
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/refresh_layout_house_property"
@@ -72,7 +70,6 @@
                 android:scrollbars="vertical" />
 
         </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
 
     </LinearLayout>
 
@@ -111,7 +108,7 @@
                 android:textColor="#5687e7" />
 
         </LinearLayout>
-    </LinearLayout>
 
+    </LinearLayout>
 
 </LinearLayout>

@@ -30,7 +30,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private FrameLayout container;
     private TextView textView;
     // icon图标id
-    private int menuResId;
+    private int menuIconId;
     private String menuStr;
 
     OnClickListener onClickListenerTopLeft;
@@ -57,8 +57,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         //将继承 getContentView() 得到的布局解析到 FrameLayout 里面
         LayoutInflater.from(BaseActivity.this).inflate(getContentView(), container);
-        //这句话要放到这里才不会出错
         ActivityCollector.addActivity(this);
+        //这句话要放到这里才不会出错
         mUnbinder = ButterKnife.bind(this);
         init(savedInstanceState);
     }
@@ -78,15 +78,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         this.onClickListenerTopLeft = onClickListener;
     }
 
-    protected void setTopRightButton(String menuStr, int menuResId, OnClickListener onClickListener) {
+    protected void setTopRightButton(String menuStr, int menuIconId, OnClickListener onClickListener) {
         this.menuStr = menuStr;
-        this.menuResId = menuResId;
+        this.menuIconId = menuIconId;
         this.onClickListenerTopRight = onClickListener;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (menuResId != 0 || !TextUtils.isEmpty(menuStr)) {
+        if (menuIconId != 0 || !TextUtils.isEmpty(menuStr)) {
             getMenuInflater().inflate(R.menu.menu_base, menu);
         }
         return true;
@@ -94,8 +94,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (menuResId != 0) {
-            menu.findItem(R.id.action_base).setIcon(menuResId);
+        if (menuIconId != 0) {
+            menu.findItem(R.id.action_base).setIcon(menuIconId);
         }
         if (!TextUtils.isEmpty(menuStr)) {
             menu.findItem(R.id.action_base).setTitle(menuStr);

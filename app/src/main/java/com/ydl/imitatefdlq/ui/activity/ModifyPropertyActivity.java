@@ -45,6 +45,8 @@ import com.ydl.imitatefdlq.entity.HouseBean;
 import com.ydl.imitatefdlq.entity.HouseBeanDao;
 import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
+import com.ydl.imitatefdlq.entity.RoomBean;
+import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.util.BitmapUtil;
 import com.ydl.imitatefdlq.util.EditTextUtils;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
@@ -108,6 +110,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
     //每一个对象代表一张表
     private HouseBeanDao houseBeanDao;
     private PictureBeanDao pictureBeanDao;
+    private RoomBeanDao roomBeanDao;
 
     private List<HouseBean> houseBeanList;
     private List<PictureBean> pictureBeanList;
@@ -150,7 +153,6 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         pictures = new File(getExternalFilesDir(null).getPath() + "/Pictures");
         //原始照片，初始化imageUri
         file = new File(pictures, "fdlq.jpg");
-
         try {
             if (file.exists()) {
                 file.delete();
@@ -169,6 +171,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         DaoSession daoSession = ((AppApplication) getApplication()).getDaoSession();
         houseBeanDao = daoSession.getHouseBeanDao();
         pictureBeanDao = daoSession.getPictureBeanDao();
+        roomBeanDao = daoSession.getRoomBeanDao();
 
         Intent intent = getIntent();
         String houseId = intent.getStringExtra("house_id");
@@ -287,12 +290,35 @@ public class ModifyPropertyActivity extends AppCompatActivity {
                 StyledDialog.buildIosAlert("删除确认", "删除房产将一并删除其所有的房号，租客及账单，您确定要删除吗？", new MyDialogListener() {
                     @Override
                     public void onFirst() {
-                        Toast.makeText(ModifyPropertyActivity.this, "确认", Toast.LENGTH_SHORT).show();
+                        //Todo 联网删除服务器数据
+
+                        //删除house表中这一行数据
+                        houseBeanDao.delete(houseBeanList.get(0));
+                        //删除picture表中这一行数据
+                        List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                                .where(PictureBeanDao.Properties.ForeignId.
+                                        eq(houseBeanList.get(0).getId()))
+                                .list();
+                        if (pictureBeanList.size() != 0) {
+                            pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());
+                        }
+                        //删除room表中跟房间id相关的房号
+                        List<RoomBean> roomBeanList = roomBeanDao.queryBuilder()
+                                .where(RoomBeanDao.Properties.HouseId.
+                                        eq(houseBeanList.get(0).getId()))
+                                .list();
+                        if (roomBeanList.size() != 0) {
+                            for (int i = 0; i < roomBeanList.size(); i++) {
+                                roomBeanDao.deleteByKey(roomBeanList.get(i).getId());
+                            }
+                        }
+                        setResult(RESULT_OK);
+                        finish();
                     }
 
                     @Override
                     public void onSecond() {
-                        Toast.makeText(ModifyPropertyActivity.this, "取消", Toast.LENGTH_SHORT).show();
+
                     }
                 }).show();
                 break;

@@ -45,7 +45,7 @@ public class AddRoomFragment extends Fragment {
     @OnClick(R.id.ll_add_room)
     public void onViewClicked() {
 
-        final View view = LayoutInflater.from(getContext()).inflate(R.layout.item_remove_header,llContainer,false);
+        final View view = LayoutInflater.from(getContext()).inflate(R.layout.partial_remove_and_edit,llContainer,false);
         //点击添加房号添加一个view
         llContainer.addView(view, llContainer.getChildCount());
         //点击红色删除图标直接删除本行

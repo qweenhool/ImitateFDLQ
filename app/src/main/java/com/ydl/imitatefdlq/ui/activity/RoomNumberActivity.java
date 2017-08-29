@@ -1,18 +1,27 @@
 package com.ydl.imitatefdlq.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hss01248.dialog.StyledDialog;
+import com.hss01248.dialog.interfaces.MyDialogListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 import com.ydl.imitatefdlq.AppApplication;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.adapter.RoomNumberAdapter;
@@ -23,7 +32,6 @@ import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
-import com.ydl.imitatefdlq.interfaze.OnItemClickListener;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
@@ -33,11 +41,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 /**
  * Created by qweenhool on 2017/8/17.
  */
 
-public class RoomNumberActivity extends BaseActivity implements OnItemClickListener {
+public class RoomNumberActivity extends BaseActivity{
+
+    private static final int REQUEST_FINISH = 1;
 
     @BindView(R.id.riv_house_photo)
     RoundImageView rivHousePhoto;
@@ -52,7 +64,7 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
     @BindView(R.id.ll_hint)
     LinearLayout llHint;
     @BindView(R.id.rv_room_number)
-    RecyclerView rvRoomNumber;
+    SwipeMenuRecyclerView rvRoomNumber;
     @BindView(R.id.refresh_layout_room_number)
     SmartRefreshLayout refreshLayoutRoomNumber;
 
@@ -116,12 +128,66 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
                     .where(RoomBeanDao.Properties.HouseId.eq(houseId))
                     .orderDesc(RoomBeanDao.Properties.OrderNumber)
                     .list();
-            if (roomBeanList != null) {
+            if (roomBeanList.size() != 0) {
                 adapter = new RoomNumberAdapter(this, roomBeanList);
-                adapter.setOnItemClickListener(this);
                 rvRoomNumber.setLayoutManager(new LinearLayoutManager(this));
-                rvRoomNumber.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+                rvRoomNumber.addItemDecoration(new DefaultItemDecoration(Color.parseColor("#d7d7db")));
                 rvRoomNumber.setAdapter(adapter);
+
+                //设置item的点击事件
+                rvRoomNumber.setSwipeItemClickListener(new SwipeItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Intent intent = new Intent(RoomNumberActivity.this, RenterActivity.class);
+                        intent.putExtra("room_number", roomBeanList.get(position).getId());
+                        startActivity(intent);
+                    }
+                });
+
+                // 设置删除菜单。
+                rvRoomNumber.setSwipeMenuCreator(new SwipeMenuCreator() {
+                    @Override
+                    public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int viewType) {
+                        SwipeMenuItem deleteItem = new SwipeMenuItem(RoomNumberActivity.this);
+                        // 各种文字和图标属性设置。
+                        deleteItem.setText("删除")
+                                .setHeight(MATCH_PARENT)
+                                .setWidth(250)
+                                .setTextSize(15)
+                                .setTextColor(Color.WHITE)
+                                .setBackgroundColor(Color.parseColor("#FE3B30"));
+                        rightMenu.addMenuItem(deleteItem); // 在Item右侧添加一个菜单。
+
+                    }
+                });
+                //设置删除菜单监听器
+                rvRoomNumber.setSwipeMenuItemClickListener(new SwipeMenuItemClickListener() {
+                    @Override
+                    public void onItemClick(final SwipeMenuBridge menuBridge) {
+                        final int adapterPosition = menuBridge.getAdapterPosition();
+                        StyledDialog.buildIosAlert("删除确认",
+                                "您确定要删除" + roomBeanList.get(adapterPosition).getRoomName() + ",同时将删除其全部租客及账单",
+                                new MyDialogListener() {
+                                    @Override
+                                    public void onFirst() {
+                                        //Todo 联网删除服务器数据
+
+                                        //删除room表的这一行数据
+                                        // RecyclerView的Item的position。
+                                        roomBeanDao.deleteByKey(roomBeanList.get(adapterPosition).getId());
+                                        roomBeanList.remove(adapterPosition);
+                                        adapter.notifyDataSetChanged();
+                                        //Todo 同时删除房号配置、照片，以及删除租客及账单
+                                    }
+
+                                    @Override
+                                    public void onSecond() {
+
+                                    }
+                                }).show();
+                        menuBridge.closeMenu();
+                    }
+                });
 
                 refreshLayoutRoomNumber.setVisibility(View.VISIBLE);
                 llHint.setVisibility(View.GONE);
@@ -175,7 +241,7 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
             case R.id.iv_edit:
                 Intent modifyPropertyIntent = new Intent(this, ModifyPropertyActivity.class);
                 modifyPropertyIntent.putExtra("house_id", houseId);
-                startActivity(modifyPropertyIntent);
+                startActivityForResult(modifyPropertyIntent,REQUEST_FINISH);
                 break;
             case R.id.ll_add_room_number:
                 Intent addRoomNumberIntent = new Intent(this, AddRoomNumberActivity.class);
@@ -192,9 +258,16 @@ public class RoomNumberActivity extends BaseActivity implements OnItemClickListe
     }
 
     @Override
-    public void onItemClick(int position) {
-        Intent renterIntent = new Intent(this, RenterActivity.class);
-        renterIntent.putExtra("room_number", roomBeanList.get(position).getId());
-        startActivity(renterIntent);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQUEST_FINISH:
+                if(resultCode == RESULT_OK){
+                    finish();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hss01248.dialog.StyledDialog;
@@ -31,6 +32,7 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 import com.ydl.imitatefdlq.AppApplication;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.adapter.HousePropertyAdapter;
@@ -39,6 +41,7 @@ import com.ydl.imitatefdlq.entity.HouseBean;
 import com.ydl.imitatefdlq.entity.HouseBeanDao;
 import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
+import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.activity.AddHouseActivity;
 import com.ydl.imitatefdlq.ui.activity.RoomNumberActivity;
@@ -68,8 +71,8 @@ public class HousePropertyFragment extends Fragment {
     Toolbar tbHouseProperty;
     @BindView(R.id.ll_house_list)
     LinearLayout llHouseList;
-    @BindView(R.id.ll_add_house_button_above)
-    LinearLayout llAddHouseButtonAbove;
+    @BindView(R.id.rl_add_house_button_above)
+    RelativeLayout rlAddHouseButtonAbove;
     @BindView(R.id.ll_add_house_button_below)
     LinearLayout llAddHouseButtonBelow;
     @BindView(R.id.refresh_layout_house_property)
@@ -103,6 +106,9 @@ public class HousePropertyFragment extends Fragment {
 
     private void initData() {
         activity = (AppCompatActivity) getActivity();
+        rvHouseProperty.setLayoutManager(new LinearLayoutManager(activity));
+        //要在这里添加分割线，不然在onResume中会不停添加
+        rvHouseProperty.addItemDecoration(new DefaultItemDecoration(Color.parseColor("#d7d7db")));
 
         DaoSession daoSession = ((AppApplication) activity.getApplication()).getDaoSession();
         houseBeanDao = daoSession.getHouseBeanDao();
@@ -156,7 +162,6 @@ public class HousePropertyFragment extends Fragment {
                 .list();
         if (houseBeanList.size() != 0) {
             adapter = new HousePropertyAdapter(activity, houseBeanList);
-            rvHouseProperty.setLayoutManager(new LinearLayoutManager(activity));
             rvHouseProperty.setAdapter(adapter);
 
             //设置item的点击事件
@@ -185,25 +190,37 @@ public class HousePropertyFragment extends Fragment {
 
                 }
             });
+
             //设置删除菜单监听器
             rvHouseProperty.setSwipeMenuItemClickListener(new SwipeMenuItemClickListener() {
                 @Override
                 public void onItemClick(final SwipeMenuBridge menuBridge) {
-                    //否则的话就关闭menu，通知adapter更新
                     StyledDialog.buildIosAlert("删除确认", "删除房产将一并删除其所有的房号,租客及账单，您确定要删除吗?", new MyDialogListener() {
                         @Override
                         public void onFirst() {
                             //Todo 联网删除服务器数据
 
-                            //删除house表的这一行数据
+                            //删除house表中这一行数据
                             int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
                             houseBeanDao.deleteByKey(houseBeanList.get(adapterPosition).getId());
-                            //删除picture表的这一行数据
+                            //删除picture表中这一行数据
                             List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
                                     .where(PictureBeanDao.Properties.ForeignId.
                                             eq(houseBeanList.get(adapterPosition).getId()))
                                     .list();
-                            pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());
+                            if (pictureBeanList.size() != 0) {
+                                pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());
+                            }
+                            //删除room表中跟房间id相关的房号
+                            List<RoomBean> roomBeanList = roomBeanDao.queryBuilder()
+                                    .where(RoomBeanDao.Properties.HouseId.
+                                            eq(houseBeanList.get(adapterPosition).getId()))
+                                    .list();
+                            if (roomBeanList.size() != 0) {
+                                for (int i = 0; i < roomBeanList.size(); i++) {
+                                    roomBeanDao.deleteByKey(roomBeanList.get(i).getId());
+                                }
+                            }
                             //更新传入adapter的数据集
                             houseBeanList.remove(adapterPosition);
                             //houseBeanList里面没有数据就显示初始界面
@@ -258,10 +275,10 @@ public class HousePropertyFragment extends Fragment {
         Log.e("HousePropertyFragment", "onStop-----");
     }
 
-    @OnClick({R.id.ll_add_house_button_above, R.id.ll_add_house_button_below})
+    @OnClick({R.id.rl_add_house_button_above, R.id.ll_add_house_button_below})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.ll_add_house_button_above:
+            case R.id.rl_add_house_button_above:
                 startAddHouseActivity();
                 break;
             case R.id.ll_add_house_button_below:

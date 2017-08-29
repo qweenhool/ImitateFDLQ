@@ -503,7 +503,7 @@ public class AddHouseActivity extends AppCompatActivity {
                 initStyledDialog();
                 break;
             case R.id.ll_receive_account:
-                Intent accountIntent = new Intent(this, SelectAccountActivity.class);
+                Intent accountIntent = new Intent(this, PayeeAccountActivity.class);
                 startActivity(accountIntent);
                 break;
         }

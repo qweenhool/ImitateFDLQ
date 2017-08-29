@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 
@@ -23,7 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SelectAccountActivity extends AppCompatActivity {
+public class PayeeAccountActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_toolbar_name)
     TextView tvToolbarName;
@@ -33,15 +35,26 @@ public class SelectAccountActivity extends AppCompatActivity {
     LinearLayout llAddAccount;
     @BindView(R.id.tv_no_account)
     TextView tvNoAccount;
+    @BindView(R.id.rv_bank_account)
+    SwipeMenuRecyclerView rvBankAccount;
+    @BindView(R.id.refresh_layout_bank_account)
+    SmartRefreshLayout refreshLayoutBankAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_account);
+        setContentView(R.layout.activity_payee_account);
         ButterKnife.bind(this);
 
         StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+
         initToolbar();
+
+        initData();
+    }
+
+    private void initData() {
+
     }
 
     private void initToolbar() {
@@ -82,18 +95,18 @@ public class SelectAccountActivity extends AppCompatActivity {
         StyledDialog.buildIosSingleChoose(Arrays.asList(accountTypeArr), new MyItemDialogListener() {
             @Override
             public void onItemClick(CharSequence charSequence, int i) {
-                Intent bankCardIntent = new Intent(SelectAccountActivity.this,AddAccountActivity.class);
+                Intent bankCardIntent = new Intent(PayeeAccountActivity.this, AddAccountActivity.class);
                 if ("银行卡".equals(charSequence)) {
-                    bankCardIntent.putExtra("BANK_CARD","bank_card");
+                    bankCardIntent.putExtra("type", "bank_card");
                     startActivity(bankCardIntent);
                 } else if ("微信".equals(charSequence)) {
-                    bankCardIntent.putExtra("WECHAT","Wechat");
+                    bankCardIntent.putExtra("type", "wechat");
                     startActivity(bankCardIntent);
                 } else if ("支付宝".equals(charSequence)) {
-                    bankCardIntent.putExtra("ALIPAY","alipay");
+                    bankCardIntent.putExtra("type", "alipay");
                     startActivity(bankCardIntent);
                 } else if ("其他".equals(charSequence)) {
-                    bankCardIntent.putExtra("OTHER","other");
+                    bankCardIntent.putExtra("type", "other");
                     startActivity(bankCardIntent);
                 }
             }
