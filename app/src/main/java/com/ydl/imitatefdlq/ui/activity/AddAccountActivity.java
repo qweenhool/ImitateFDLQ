@@ -1,16 +1,24 @@
 package com.ydl.imitatefdlq.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ydl.imitatefdlq.AppApplication;
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.entity.DaoSession;
+import com.ydl.imitatefdlq.entity.PayeeAccountBean;
+import com.ydl.imitatefdlq.entity.PayeeAccountBeanDao;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
+import com.ydl.imitatefdlq.widget.XEditText;
+
+import java.util.Date;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,10 +33,10 @@ public class AddAccountActivity extends BaseActivity {
     @BindView(R.id.rl_alipay)
     RelativeLayout rlAlipay;
 
-    @BindView(R.id.et_cardholder_name)
-    EditText etCardholderName;
+    @BindView(R.id.et_cardholder)
+    EditText etCardholder;
     @BindView(R.id.et_card_number)
-    EditText etCardNumber;
+    XEditText etCardNumber;
     @BindView(R.id.et_deposit_bank)
     EditText etDepositBank;
     @BindView(R.id.et_deposit_branch)
@@ -36,19 +44,16 @@ public class AddAccountActivity extends BaseActivity {
 
     @BindView(R.id.et_wechat)
     EditText etWechat;
-    @BindView(R.id.tv_wechat_hint)
-    TextView tvWechatHint;
-
     @BindView(R.id.et_alipay)
     EditText etAlipay;
-    @BindView(R.id.tv_Alipay_hint)
-    TextView tvAlipayHint;
-
     @BindView(R.id.et_remark)
     EditText etRemark;
-
     @BindView(R.id.iv_scan)
     ImageView ivScan;
+
+    private String type;
+    private PayeeAccountBeanDao payeeAccountBeanDao;
+    private PayeeAccountBean payeeAccountBean;
 
     @Override
     protected int getContentView() {
@@ -59,6 +64,8 @@ public class AddAccountActivity extends BaseActivity {
     protected void init(Bundle savedInstanceState) {
 
         initView();
+
+        initData();
 
         setTitle("添加收款账户");
 
@@ -72,14 +79,105 @@ public class AddAccountActivity extends BaseActivity {
         setTopRightButton("保存", 0, new OnClickListener() {
             @Override
             public void onClick() {
+                switch (type) {//从JDK7开始加入支持String类型
+                    case "bank_card":
+                        payeeAccountBean.setId(UUID.randomUUID().toString());
+                        payeeAccountBean.setAccountName("银行卡");
+                        payeeAccountBean.setAccountType(1);
+                        payeeAccountBean.setOrderNumber(new Date());
+                        if (!TextUtils.isEmpty(etCardholder.getText().toString().trim())) {
+                            payeeAccountBean.setCardHolder(etCardholder.getText().toString().trim());
+                        } else {
+                            Toast.makeText(AddAccountActivity.this, "持卡人不能为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (!TextUtils.isEmpty(etCardNumber.getText().toString().trim())) {
+                            payeeAccountBean.setCardNumber(etCardNumber.getTrimmedString());
+                        } else {
+                            Toast.makeText(AddAccountActivity.this, "卡号不能为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
+                        if (!TextUtils.isEmpty(etDepositBank.getText().toString().trim())) {
+                            payeeAccountBean.setDepositBank(etDepositBank.getText().toString());
+                        } else {
+                            Toast.makeText(AddAccountActivity.this, "开户行不能为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (!TextUtils.isEmpty(etDepositBranch.getText().toString().trim())) {
+                            payeeAccountBean.setDepositBranch(etDepositBranch.getText().toString());
+                        }
+                        if (!TextUtils.isEmpty(etRemark.getText().toString())) {
+                            payeeAccountBean.setRemark(etRemark.getText().toString());
+                        }
+                        payeeAccountBeanDao.insert(payeeAccountBean);
+                        finish();
+                        break;
+                    case "wechat":
+                        payeeAccountBean.setId(UUID.randomUUID().toString());
+                        payeeAccountBean.setAccountName("微信");
+                        payeeAccountBean.setAccountType(2);
+                        payeeAccountBean.setOrderNumber(new Date());
+                        if (!TextUtils.isEmpty(etWechat.getText().toString().trim())) {
+                            payeeAccountBean.setWechatAccount(etWechat.getText().toString());
+                        } else {
+                            Toast.makeText(AddAccountActivity.this, "微信号不能为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (!TextUtils.isEmpty(etRemark.getText().toString())) {
+                            payeeAccountBean.setRemark(etRemark.getText().toString());
+                        }
+                        payeeAccountBeanDao.insert(payeeAccountBean);
+                        finish();
+                        break;
+                    case "alipay":
+                        payeeAccountBean.setId(UUID.randomUUID().toString());
+                        payeeAccountBean.setAccountName("支付宝");
+                        payeeAccountBean.setAccountType(3);
+                        payeeAccountBean.setOrderNumber(new Date());
+                        if (!TextUtils.isEmpty(etAlipay.getText().toString().trim())) {
+                            payeeAccountBean.setAlipayAccount(etAlipay.getText().toString());
+                        } else {
+                            Toast.makeText(AddAccountActivity.this, "支付宝号不能为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (!TextUtils.isEmpty(etRemark.getText().toString())) {
+                            payeeAccountBean.setRemark(etRemark.getText().toString());
+                        }
+                        payeeAccountBeanDao.insert(payeeAccountBean);
+                        finish();
+                        break;
+                    case "other":
+                        payeeAccountBean.setId(UUID.randomUUID().toString());
+                        payeeAccountBean.setAccountName("其他账户");
+                        payeeAccountBean.setAccountType(4);
+                        payeeAccountBean.setOrderNumber(new Date());
+                        if (!TextUtils.isEmpty(etRemark.getText().toString().trim())) {
+                            payeeAccountBean.setRemark(etRemark.getText().toString());
+                        } else {
+                            Toast.makeText(AddAccountActivity.this, "备注不能为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        payeeAccountBeanDao.insert(payeeAccountBean);
+                        finish();
+                        break;
+                    default:
+                        break;
+                }
             }
         });
     }
 
+    private void initData() {
+        DaoSession daoSession = AppApplication.getInstance().getDaoSession();
+        payeeAccountBeanDao = daoSession.getPayeeAccountBeanDao();
+        payeeAccountBean = new PayeeAccountBean();
+    }
+
     private void initView() {
-        Intent intent = getIntent();
-        String type = intent.getStringExtra("type");
+        etCardNumber.setPattern(new int[]{4, 4, 4, 4, 4, 4, 3}, " ");
+
+        type = getIntent().getStringExtra("type");
         switch (type) {//从JDK7开始加入支持String类型
             case "bank_card":
                 llBankAccount.setVisibility(View.VISIBLE);

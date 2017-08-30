@@ -19,6 +19,8 @@ import com.ydl.imitatefdlq.util.StatusBarCompat;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.ydl.imitatefdlq.R.id.action_base;
+
 /**
  * Created by qweenhool on 2017/8/17.
  */
@@ -95,10 +97,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (menuIconId != 0) {
-            menu.findItem(R.id.action_base).setIcon(menuIconId);
+            menu.findItem(action_base).setIcon(menuIconId);
         }
         if (!TextUtils.isEmpty(menuStr)) {
-            menu.findItem(R.id.action_base).setTitle(menuStr);
+            menu.findItem(action_base).setTitle(menuStr);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -107,6 +109,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onClickListenerTopLeft.onClick();
+        }
+        if(item.getItemId() == R.id.action_base){
+            onClickListenerTopRight.onClick();
         }
         return true; // true 告诉系统我们自己处理了点击事件
     }

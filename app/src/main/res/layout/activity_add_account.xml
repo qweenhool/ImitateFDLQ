@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,7 +31,7 @@
                     android:textColor="#000000" />
 
                 <EditText
-                    android:id="@+id/et_cardholder_name"
+                    android:id="@+id/et_cardholder"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -66,7 +67,7 @@
                     android:text="卡号"
                     android:textColor="#000000" />
 
-                <EditText
+                <com.ydl.imitatefdlq.widget.XEditText
                     android:id="@+id/et_card_number"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -74,6 +75,7 @@
                     android:background="@null"
                     android:hint="请输入卡号"
                     android:maxLength="40"
+                    android:inputType="phone"
                     android:paddingBottom="15dp"
                     android:paddingLeft="56dp"
                     android:paddingRight="20dp"
@@ -81,7 +83,9 @@
                     android:singleLine="true"
                     android:textColorHint="#babcc6"
                     android:textCursorDrawable="@drawable/color_cursor"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    app:x_disableClear="true"
+                    />
 
                 <ImageView
                     android:id="@+id/iv_scan"
@@ -190,25 +194,19 @@
 
             <EditText
                 android:id="@+id/et_wechat"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="15dp"
+                android:layout_marginLeft="60dp"
                 android:background="@null"
-                android:singleLine="true"
-                android:textCursorDrawable="@drawable/color_cursor" />
-
-            <TextView
-                android:id="@+id/tv_wechat_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/et_wechat"
-                android:background="@null"
+                android:gravity="center_vertical|right"
                 android:hint="请输入微信号"
+                android:paddingRight="15dp"
+                android:singleLine="true"
                 android:textColorHint="#babcc6"
-                android:textSize="13sp" />
+                android:textCursorDrawable="@null"
+                android:textSize="14sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -236,25 +234,19 @@
 
             <EditText
                 android:id="@+id/et_alipay"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="15dp"
+                android:layout_marginLeft="70dp"
                 android:background="@null"
-                android:singleLine="true"
-                android:textCursorDrawable="@drawable/color_cursor" />
-
-            <TextView
-                android:id="@+id/tv_Alipay_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/et_alipay"
-                android:background="@null"
+                android:gravity="center_vertical|right"
                 android:hint="请输入支付宝账号"
+                android:paddingRight="15dp"
+                android:singleLine="true"
                 android:textColorHint="#babcc6"
-                android:textSize="13sp" />
+                android:textCursorDrawable="@null"
+                android:textSize="14sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -287,14 +279,14 @@
                 android:id="@+id/et_remark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="15dp"
-                android:layout_marginBottom="100dp"
                 android:background="@null"
                 android:gravity="start"
                 android:hint="请输入备注内容"
+                android:minLines="5"
+                android:padding="15dp"
                 android:textColorHint="#babcc6"
                 android:textCursorDrawable="@drawable/color_cursor"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
         </FrameLayout>
 
     </LinearLayout>

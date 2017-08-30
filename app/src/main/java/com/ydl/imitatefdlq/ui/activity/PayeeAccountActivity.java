@@ -1,10 +1,12 @@
 package com.ydl.imitatefdlq.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,14 +18,23 @@ import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
+import com.ydl.imitatefdlq.AppApplication;
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.adapter.PayeeAccountAdapter;
+import com.ydl.imitatefdlq.entity.DaoSession;
+import com.ydl.imitatefdlq.entity.PayeeAccountBean;
+import com.ydl.imitatefdlq.entity.PayeeAccountBeanDao;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class PayeeAccountActivity extends AppCompatActivity {
 
@@ -40,6 +51,11 @@ public class PayeeAccountActivity extends AppCompatActivity {
     @BindView(R.id.refresh_layout_bank_account)
     SmartRefreshLayout refreshLayoutBankAccount;
 
+    private PayeeAccountBeanDao payeeAccountBeanDao;
+
+    private List<PayeeAccountBean> payeeAccountBeanList;
+    private PayeeAccountAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +70,12 @@ public class PayeeAccountActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        rvBankAccount.setLayoutManager(new LinearLayoutManager(this));
+        //要在这里添加分割线，不然在onResume中会不停添加
+        rvBankAccount.addItemDecoration(new DefaultItemDecoration(Color.parseColor("#efeff4"),MATCH_PARENT,30));
+
+        DaoSession daoSession = AppApplication.getInstance().getDaoSession();
+        payeeAccountBeanDao = daoSession.getPayeeAccountBeanDao();
 
     }
 
@@ -72,6 +94,28 @@ public class PayeeAccountActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        payeeAccountBeanList = payeeAccountBeanDao.queryBuilder()
+                .orderDesc(PayeeAccountBeanDao.Properties.OrderNumber)
+                .list();
+
+        if (payeeAccountBeanList.size() != 0) {
+            adapter = new PayeeAccountAdapter(this, payeeAccountBeanList);
+            rvBankAccount.setAdapter(adapter);
+
+
+            refreshLayoutBankAccount.setVisibility(View.VISIBLE);
+            tvNoAccount.setVisibility(View.GONE);
+        } else {
+            refreshLayoutBankAccount.setVisibility(View.GONE);
+            tvNoAccount.setVisibility(View.VISIBLE);
+        }
 
     }
 
