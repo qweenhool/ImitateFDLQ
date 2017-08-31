@@ -3,7 +3,7 @@
     android:id="@+id/rl_house_item"
     android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:background="@drawable/selector_ll_text_color">
+    android:background="@drawable/selector_ll_bg">
 
     <com.ydl.imitatefdlq.widget.RoundImageView
         android:id="@+id/riv_house_photo"

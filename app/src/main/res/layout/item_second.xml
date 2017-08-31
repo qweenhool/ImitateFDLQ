@@ -12,7 +12,7 @@
         android:layout_height="100dp"
         android:layout_weight="1"
         android:orientation="horizontal"
-        android:background="@drawable/selector_ll_text_color"
+        android:background="@drawable/selector_ll_bg"
         android:clickable="true">
 
         <ImageView
@@ -59,7 +59,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:background="@drawable/selector_ll_text_color"
+            android:background="@drawable/selector_ll_bg"
             android:clickable="true">
 
             <TextView
@@ -81,7 +81,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:background="@drawable/selector_ll_text_color"
+            android:background="@drawable/selector_ll_bg"
             android:clickable="true">
 
             <TextView

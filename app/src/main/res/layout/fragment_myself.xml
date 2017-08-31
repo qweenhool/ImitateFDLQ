@@ -28,7 +28,7 @@
                 android:id="@+id/ll_personal_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/selector_ll_text_color"
+                android:background="@drawable/selector_ll_bg"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -82,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:orientation="horizontal"
-                    android:background="@drawable/selector_ll_text_color">
+                    android:background="@drawable/selector_ll_bg">
 
                     <ImageView
                         android:layout_width="25dp"
@@ -128,7 +128,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:orientation="horizontal"
-                    android:background="@drawable/selector_ll_text_color">
+                    android:background="@drawable/selector_ll_bg">
 
                     <ImageView
                         android:layout_width="25dp"
@@ -172,7 +172,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:orientation="horizontal"
-                    android:background="@drawable/selector_ll_text_color">
+                    android:background="@drawable/selector_ll_bg">
 
                     <ImageView
                         android:layout_width="25dp"
@@ -209,7 +209,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:orientation="horizontal"
-                    android:background="@drawable/selector_ll_text_color">
+                    android:background="@drawable/selector_ll_bg">
 
                     <ImageView
                         android:layout_width="25dp"
@@ -253,7 +253,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:orientation="horizontal"
-                    android:background="@drawable/selector_ll_text_color">
+                    android:background="@drawable/selector_ll_bg">
 
                     <ImageView
                         android:layout_width="25dp"
@@ -290,7 +290,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:orientation="horizontal"
-                    android:background="@drawable/selector_ll_text_color">
+                    android:background="@drawable/selector_ll_bg">
 
                     <ImageView
                         android:layout_width="25dp"
@@ -329,7 +329,7 @@
                 android:layout_height="48dp"
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/selector_ll_text_color">
+                android:background="@drawable/selector_ll_bg">
 
                 <ImageView
                     android:layout_width="25dp"

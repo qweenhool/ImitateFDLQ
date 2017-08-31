@@ -55,7 +55,6 @@ public class RoomNumberAdapter extends RecyclerView.Adapter<RoomNumberAdapter.Ro
     }
 
 
-
     class RoomNumberViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView roomNumber;
@@ -72,7 +71,7 @@ public class RoomNumberAdapter extends RecyclerView.Adapter<RoomNumberAdapter.Ro
 
         @Override
         public void onClick(View v) {
-            listener.onItemClick(getLayoutPosition());
+            listener.onItemClick(v, getLayoutPosition());
         }
     }
 }

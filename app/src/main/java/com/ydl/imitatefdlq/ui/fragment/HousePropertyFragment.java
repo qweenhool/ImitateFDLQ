@@ -195,7 +195,9 @@ public class HousePropertyFragment extends Fragment {
             rvHouseProperty.setSwipeMenuItemClickListener(new SwipeMenuItemClickListener() {
                 @Override
                 public void onItemClick(final SwipeMenuBridge menuBridge) {
-                    StyledDialog.buildIosAlert("删除确认", "删除房产将一并删除其所有的房号,租客及账单，您确定要删除吗?", new MyDialogListener() {
+                    StyledDialog.buildIosAlert("删除确认",
+                            "删除房产将一并删除其所有的房号,租客及账单，您确定要删除吗?",
+                            new MyDialogListener() {
                         @Override
                         public void onFirst() {
                             //Todo 联网删除服务器数据

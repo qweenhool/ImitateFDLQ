@@ -70,7 +70,8 @@
         </activity>
         <activity android:name=".ui.activity.RegisterActivity" />
         <activity android:name=".ui.activity.LoadingActivity" />
-        <activity android:name=".ui.activity.PersonalInfoActivity"></activity>
+        <activity android:name=".ui.activity.PersonalInfoActivity" />
+        <activity android:name=".ui.activity.ModifyAccountActivity"></activity>
     </application>
 
 </manifest>

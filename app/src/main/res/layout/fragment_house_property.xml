@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/selector_ll_text_color"
+            android:background="@drawable/selector_ll_bg"
             android:clickable="true">
 
             <TextView
@@ -61,7 +61,8 @@
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/refresh_layout_house_property"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:srlEnableOverScrollBounce="false">
 
             <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
                 android:id="@+id/rv_house_property"

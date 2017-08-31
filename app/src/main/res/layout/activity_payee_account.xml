@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#efeff4"
+    android:orientation="vertical"
     tools:context=".ui.activity.PayeeAccountActivity">
 
     <android.support.v7.widget.Toolbar
@@ -31,37 +31,39 @@
         android:id="@+id/ll_add_account"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:orientation="horizontal"
+        android:background="@drawable/selector_ll_bg"
+        android:clickable="true"
         android:gravity="center"
-        android:background="@drawable/selector_ll_text_color"
-        android:clickable="true">
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_circle"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_add_circle" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="添加收款账户"
-            android:textColor="#5687e7"/>
+            android:textColor="#5687e7" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#d9d9d9"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:background="#d9d9d9" />
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/refresh_layout_bank_account"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:paddingBottom="15dp"
         android:paddingLeft="15dp"
-        android:paddingRight="15dp">
+        android:paddingRight="15dp"
+        android:visibility="gone"
+        app:srlEnableOverScrollBounce="false">
 
         <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
             android:id="@+id/rv_bank_account"
@@ -72,10 +74,10 @@
 
     <TextView
         android:id="@+id/tv_no_account"
-        android:layout_marginTop="200dp"
-        android:textSize="18sp"
-        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="暂未添加收款账户"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="200dp"
+        android:text="暂未添加收款账户"
+        android:textSize="18sp" />
 </LinearLayout>

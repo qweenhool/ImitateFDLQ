@@ -16,7 +16,7 @@
             android:id="@+id/rl_head_portrait"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:background="@drawable/selector_ll_text_color"
+            android:background="@drawable/selector_ll_bg"
             android:gravity="center_vertical">
 
             <TextView
@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:clickable="true"
-            android:background="@drawable/selector_ll_text_color"
+            android:background="@drawable/selector_ll_bg"
             android:orientation="horizontal">
 
             <TextView
@@ -103,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:clickable="true"
-            android:background="@drawable/selector_ll_text_color"
+            android:background="@drawable/selector_ll_bg"
             android:orientation="horizontal">
 
             <TextView
@@ -186,7 +186,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:clickable="true"
-        android:background="@drawable/selector_ll_text_color"
+        android:background="@drawable/selector_ll_bg"
         android:orientation="horizontal">
 
         <TextView
@@ -230,7 +230,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/selector_ll_text_color"
+        android:background="@drawable/selector_ll_bg"
         android:gravity="center"
         android:clickable="true"
         android:orientation="horizontal">

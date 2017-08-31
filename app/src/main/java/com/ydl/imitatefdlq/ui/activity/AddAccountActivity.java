@@ -1,5 +1,6 @@
 package com.ydl.imitatefdlq.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -79,9 +80,14 @@ public class AddAccountActivity extends BaseActivity {
         setTopRightButton("保存", 0, new OnClickListener() {
             @Override
             public void onClick() {
+                String uuid = UUID.randomUUID().toString();
+                //返回最新的一条数据给上一个activity
+                Intent intent = new Intent();
+                intent.putExtra("uuid",uuid);
+
                 switch (type) {//从JDK7开始加入支持String类型
                     case "bank_card":
-                        payeeAccountBean.setId(UUID.randomUUID().toString());
+                        payeeAccountBean.setId(uuid);
                         payeeAccountBean.setAccountName("银行卡");
                         payeeAccountBean.setAccountType(1);
                         payeeAccountBean.setOrderNumber(new Date());
@@ -111,10 +117,11 @@ public class AddAccountActivity extends BaseActivity {
                             payeeAccountBean.setRemark(etRemark.getText().toString());
                         }
                         payeeAccountBeanDao.insert(payeeAccountBean);
+                        setResult(RESULT_OK,intent);
                         finish();
                         break;
                     case "wechat":
-                        payeeAccountBean.setId(UUID.randomUUID().toString());
+                        payeeAccountBean.setId(uuid);
                         payeeAccountBean.setAccountName("微信");
                         payeeAccountBean.setAccountType(2);
                         payeeAccountBean.setOrderNumber(new Date());
@@ -128,10 +135,11 @@ public class AddAccountActivity extends BaseActivity {
                             payeeAccountBean.setRemark(etRemark.getText().toString());
                         }
                         payeeAccountBeanDao.insert(payeeAccountBean);
+                        setResult(RESULT_OK,intent);
                         finish();
                         break;
                     case "alipay":
-                        payeeAccountBean.setId(UUID.randomUUID().toString());
+                        payeeAccountBean.setId(uuid);
                         payeeAccountBean.setAccountName("支付宝");
                         payeeAccountBean.setAccountType(3);
                         payeeAccountBean.setOrderNumber(new Date());
@@ -145,10 +153,11 @@ public class AddAccountActivity extends BaseActivity {
                             payeeAccountBean.setRemark(etRemark.getText().toString());
                         }
                         payeeAccountBeanDao.insert(payeeAccountBean);
+                        setResult(RESULT_OK,intent);
                         finish();
                         break;
                     case "other":
-                        payeeAccountBean.setId(UUID.randomUUID().toString());
+                        payeeAccountBean.setId(uuid);
                         payeeAccountBean.setAccountName("其他账户");
                         payeeAccountBean.setAccountType(4);
                         payeeAccountBean.setOrderNumber(new Date());
@@ -159,6 +168,7 @@ public class AddAccountActivity extends BaseActivity {
                             return;
                         }
                         payeeAccountBeanDao.insert(payeeAccountBean);
+                        setResult(RESULT_OK,intent);
                         finish();
                         break;
                     default:

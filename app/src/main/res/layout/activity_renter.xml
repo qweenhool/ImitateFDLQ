@@ -48,7 +48,7 @@
         android:id="@+id/ll_add_room_number"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:background="@drawable/selector_ll_text_color"
+        android:background="@drawable/selector_ll_bg"
         android:clickable="true"
         android:gravity="center"
         android:layout_marginTop="10dp"
