@@ -89,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
 //                login();
                 Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
                 startActivity(intent);
+                finish();
             }
         } else {
             Toast.makeText(this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();

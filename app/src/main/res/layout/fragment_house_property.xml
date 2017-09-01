@@ -84,7 +84,7 @@
             android:id="@+id/iv_bg"
             android:layout_width="match_parent"
             android:layout_height="320dp"
-            android:background="@drawable/bg" />
+            android:background="@drawable/bg_no_house" />
 
         <LinearLayout
             android:id="@+id/ll_add_house_button_below"

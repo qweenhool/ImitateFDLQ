@@ -5,7 +5,9 @@ import android.os.Bundle;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
 
-public class RenterActivity extends BaseActivity{
+import butterknife.ButterKnife;
+
+public class RenterActivity extends BaseActivity {
 
     @Override
     protected int getContentView() {
@@ -23,6 +25,13 @@ public class RenterActivity extends BaseActivity{
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 
 }

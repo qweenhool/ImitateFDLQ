@@ -220,7 +220,7 @@ public class AddHouseActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void initStyledDialog() {
+    private void showStyledDialog() {
         StyledDialog.buildIosSingleChoose(housePhotoList, new MyItemDialogListener() {
             @Override
             public void onItemClick(CharSequence charSequence, int i) {
@@ -500,7 +500,7 @@ public class AddHouseActivity extends AppCompatActivity {
                 opvHouseType.show();
                 break;
             case R.id.ll_house_photo:
-                initStyledDialog();
+                showStyledDialog();
                 break;
             case R.id.ll_receive_account:
                 Intent accountIntent = new Intent(this, PayeeAccountActivity.class);
