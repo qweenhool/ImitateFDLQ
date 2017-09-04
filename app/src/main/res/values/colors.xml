@@ -3,7 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorStatusbar">#000000</color>
+    <color name="colorStatusBar">#000000</color>
     <color name="colorRefreshBackGround">#efeff4</color>
-    <color name="colorfab">#4688f4</color>
+    <color name="colorFAB">#4688f4</color>
+    <!--设置TakePhoto里面的状态栏颜色-->
+    <color name="multiple_image_select_primaryDark">#212121</color>
+    <!--设置TakePhoto里面的toolbar颜色-->
+    <color name="multiple_image_select_primary">#5287E7</color>
 </resources>

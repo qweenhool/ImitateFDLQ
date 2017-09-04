@@ -23,7 +23,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
         iniView();
 
     }

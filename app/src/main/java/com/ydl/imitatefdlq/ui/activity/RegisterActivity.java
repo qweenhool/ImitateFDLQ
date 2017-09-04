@@ -42,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
 
     }
 

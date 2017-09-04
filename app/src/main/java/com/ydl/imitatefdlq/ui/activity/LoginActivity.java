@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
 
         initData();
 

@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -132,7 +133,7 @@ public class AddHouseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_house);
         ButterKnife.bind(this);
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
         EditTextUtils.clearButtonListener(etAddHouseName, ivClear);
 
         initData();
@@ -223,34 +224,41 @@ public class AddHouseActivity extends AppCompatActivity {
     private void showStyledDialog() {
         StyledDialog.buildIosSingleChoose(housePhotoList, new MyItemDialogListener() {
             @Override
-            public void onItemClick(CharSequence charSequence, int i) {
-                if ("拍照".equals(charSequence)) {
-                    if (ContextCompat.checkSelfPermission(AddHouseActivity.this,
-                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
-                        ActivityCompat.requestPermissions(AddHouseActivity.this,
-                                new String[]{Manifest.permission.CAMERA}, 1);
-                    } else {//同意拍照就打开摄像头
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                        startActivityForResult(intent, TAKE_PHOTO);
+            public void onItemClick(final CharSequence charSequence, int i) {
+                //为了解决跳转黑屏问题，采用延时执行
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if ("拍照".equals(charSequence)) {
+                            if (ContextCompat.checkSelfPermission(AddHouseActivity.this,
+                                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                                ActivityCompat.requestPermissions(AddHouseActivity.this,
+                                        new String[]{Manifest.permission.CAMERA}, 1);
+                            } else {//同意拍照就打开摄像头
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                startActivityForResult(intent, TAKE_PHOTO);
+                            }
+                        } else if ("从手机相册选择".equals(charSequence)) {
+                            if (ContextCompat.checkSelfPermission(AddHouseActivity.this,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                                ActivityCompat.requestPermissions(AddHouseActivity.this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                            } else {//同意就打开相册
+                                Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                                intent.setType("image/*");
+                                startActivityForResult(intent, CHOOSE_PHOTO);
+                            }
+                        } else if ("删除".equals(charSequence)) {
+                            ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
+                            picUUID = null;
+                            if (housePhotoList.contains("删除")) {
+                                housePhotoList.remove("删除");
+                            }
+                        }
                     }
-                } else if ("从手机相册选择".equals(charSequence)) {
-                    if (ContextCompat.checkSelfPermission(AddHouseActivity.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
-                        ActivityCompat.requestPermissions(AddHouseActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    } else {//同意就打开相册
-                        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-                        intent.setType("image/*");
-                        startActivityForResult(intent, CHOOSE_PHOTO);
-                    }
-                } else if ("删除".equals(charSequence)) {
-                    ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
-                    picUUID = null;
-                    if (housePhotoList.contains("删除")) {
-                        housePhotoList.remove("删除");
-                    }
-                }
+                }, 100);
+
             }
         })
                 .setCancelable(true, true)

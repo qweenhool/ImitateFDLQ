@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void init(Bundle savedInstanceState) {
 
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
         toolbar.setVisibility(View.GONE);
         initView();
         initData();

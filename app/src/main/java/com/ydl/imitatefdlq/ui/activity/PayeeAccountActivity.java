@@ -3,6 +3,7 @@ package com.ydl.imitatefdlq.ui.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -70,7 +71,7 @@ public class PayeeAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_payee_account);
         ButterKnife.bind(this);
 
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
 
         initToolbar();
 
@@ -228,21 +229,27 @@ public class PayeeAccountActivity extends AppCompatActivity {
         String[] accountTypeArr = new String[]{"银行卡", "微信", "支付宝", "其他"};
         StyledDialog.buildIosSingleChoose(Arrays.asList(accountTypeArr), new MyItemDialogListener() {
             @Override
-            public void onItemClick(CharSequence charSequence, int i) {
-                Intent bankCardIntent = new Intent(PayeeAccountActivity.this, AddAccountActivity.class);
-                if ("银行卡".equals(charSequence)) {
-                    bankCardIntent.putExtra("type", "bank_card");
-                    startActivityForResult(bankCardIntent, 1);
-                } else if ("微信".equals(charSequence)) {
-                    bankCardIntent.putExtra("type", "wechat");
-                    startActivityForResult(bankCardIntent, 1);
-                } else if ("支付宝".equals(charSequence)) {
-                    bankCardIntent.putExtra("type", "alipay");
-                    startActivityForResult(bankCardIntent, 1);
-                } else if ("其他".equals(charSequence)) {
-                    bankCardIntent.putExtra("type", "other");
-                    startActivityForResult(bankCardIntent, 1);
-                }
+            public void onItemClick(final CharSequence charSequence, int i) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent bankCardIntent = new Intent(PayeeAccountActivity.this, AddAccountActivity.class);
+                        if ("银行卡".equals(charSequence)) {
+                            bankCardIntent.putExtra("type", "bank_card");
+                            startActivityForResult(bankCardIntent, 1);
+                        } else if ("微信".equals(charSequence)) {
+                            bankCardIntent.putExtra("type", "wechat");
+                            startActivityForResult(bankCardIntent, 1);
+                        } else if ("支付宝".equals(charSequence)) {
+                            bankCardIntent.putExtra("type", "alipay");
+                            startActivityForResult(bankCardIntent, 1);
+                        } else if ("其他".equals(charSequence)) {
+                            bankCardIntent.putExtra("type", "other");
+                            startActivityForResult(bankCardIntent, 1);
+                        }
+                    }
+                }, 100);
+
             }
         })
                 .setCancelable(true, true)

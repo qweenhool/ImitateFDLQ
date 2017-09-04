@@ -88,7 +88,7 @@ public class ThirdFragment extends Fragment {
 
 
     private void initFab() {
-        fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(),R.color.colorfab)));
+        fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(),R.color.colorFAB)));
         fab.setImageDrawable(ContextCompat.getDrawable(getContext(),R.drawable.ic_write));
 
         fab.setOnClickListener(new View.OnClickListener() {

@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
  */
 
 public class BitmapUtil {
-    public static File saveBitmapToFile(File file, String newpath) {
+    public static File saveBitmapToFile(File file, String newPath) {
         try {
 
             // BitmapFactory options to downsize the image
@@ -52,7 +52,7 @@ public class BitmapUtil {
 //            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , outputStream);
 
 
-            File aa = new File(newpath);
+            File aa = new File(newPath);
 
             FileOutputStream outputStream = new FileOutputStream(aa);
 

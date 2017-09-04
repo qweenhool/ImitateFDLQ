@@ -120,7 +120,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_property);
         ButterKnife.bind(this);
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusbar));
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
         EditTextUtils.clearButtonListener(etHouseName, ivClear);
 
         initToolbar();

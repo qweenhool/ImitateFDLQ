@@ -5,44 +5,85 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
+import com.jph.takephoto.app.TakePhoto;
+import com.jph.takephoto.app.TakePhotoImpl;
+import com.jph.takephoto.model.InvokeParam;
+import com.jph.takephoto.model.TContextWrap;
+import com.jph.takephoto.model.TImage;
+import com.jph.takephoto.model.TResult;
+import com.jph.takephoto.permission.InvokeListener;
+import com.jph.takephoto.permission.PermissionManager;
+import com.jph.takephoto.permission.TakePhotoInvocationHandler;
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.adapter.RoomPhotoAdapter;
+import com.ydl.imitatefdlq.interfaze.OnItemClickListener;
+import com.ydl.imitatefdlq.interfaze.OnItemLongClickListener;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
+import com.ydl.imitatefdlq.util.BitmapUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class RoomPhotoActivity extends BaseActivity {
+import static com.hss01248.dialog.StyledDialog.context;
+
+public class RoomPhotoActivity extends BaseActivity implements TakePhoto.TakeResultListener, InvokeListener, OnItemClickListener, OnItemLongClickListener {
 
     private static final int TAKE_PHOTO = 1;
     private static final int CHOOSE_PHOTO = 2;
+
     @BindView(R.id.rl_add_room_photo_above)
     RelativeLayout rlAddRoomPhotoAbove;
     @BindView(R.id.rv_room_photo)
     RecyclerView rvRoomPhoto;
     @BindView(R.id.btn_add_room_photo)
     Button btnAddRoomPhoto;
+    @BindView(R.id.ll_no_photo)
+    LinearLayout llNoPhoto;
 
     private List<String> optionsList;
     private Uri imageUri;
+    private TakePhoto takePhoto;
+    private InvokeParam invokeParam;
+    private ArrayList<String> images;
+    private RoomPhotoAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getTakePhoto().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        getTakePhoto().onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        getTakePhoto().onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -69,6 +110,13 @@ public class RoomPhotoActivity extends BaseActivity {
         optionsList = new ArrayList<>();
         optionsList.add("拍照");
         optionsList.add("从手机相册选择");
+
+        images = new ArrayList<>();
+        rvRoomPhoto.setLayoutManager(new GridLayoutManager(this, 4));
+        adapter = new RoomPhotoAdapter(RoomPhotoActivity.this, images);
+        adapter.setItemClickListener(this);
+        adapter.setItemLongClickListener(this);
+        rvRoomPhoto.setAdapter(adapter);
     }
 
     @OnClick({R.id.rl_add_room_photo_above, R.id.btn_add_room_photo})
@@ -86,26 +134,38 @@ public class RoomPhotoActivity extends BaseActivity {
     private void showStyledDialog() {
         StyledDialog.buildIosSingleChoose(optionsList, new MyItemDialogListener() {
             @Override
-            public void onItemClick(CharSequence charSequence, int i) {
-                if ("拍照".equals(charSequence)) {
-                    if (ContextCompat.checkSelfPermission(RoomPhotoActivity.this,
-                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
-                        ActivityCompat.requestPermissions(RoomPhotoActivity.this,
-                                new String[]{Manifest.permission.CAMERA}, 1);
-                    } else {//同意拍照就打开摄像头
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                        startActivityForResult(intent, TAKE_PHOTO);
-                    }
-                } else if ("从手机相册选择".equals(charSequence)) {
-                    if (ContextCompat.checkSelfPermission(RoomPhotoActivity.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
-                        ActivityCompat.requestPermissions(RoomPhotoActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    } else {//同意就打开相册
+            public void onItemClick(final CharSequence charSequence, int i) {
+                //为了解决跳转黑屏问题，采用延时执行
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if ("拍照".equals(charSequence)) {
+                            if (ContextCompat.checkSelfPermission(RoomPhotoActivity.this,
+                                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                                ActivityCompat.requestPermissions(RoomPhotoActivity.this,
+                                        new String[]{Manifest.permission.CAMERA}, 1);
+                            } else {//同意拍照就打开摄像头
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                startActivityForResult(intent, TAKE_PHOTO);
+                            }
+                        } else if ("从手机相册选择".equals(charSequence)) {
+                            if (ContextCompat.checkSelfPermission(RoomPhotoActivity.this,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                                ActivityCompat.requestPermissions(RoomPhotoActivity.this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                            } else {//同意就打开相册
+                                /**
+                                 * 图片多选
+                                 * @param limit 最多选择图片张数的限制
+                                 **/
 
+                                takePhoto.onPickMultiple(6);
+                            }
+                        }
                     }
-                }
+                }, 100);
+
             }
         })
                 .setCancelable(true, true)
@@ -114,6 +174,8 @@ public class RoomPhotoActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionManager.TPermissionType type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionManager.handlePermissionsResult(this, type, invokeParam, this);
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -137,5 +199,73 @@ public class RoomPhotoActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 获取TakePhoto实例
+     *
+     * @return
+     */
+    public TakePhoto getTakePhoto() {
+        if (takePhoto == null) {
+            takePhoto = (TakePhoto) TakePhotoInvocationHandler.of(this).bind(new TakePhotoImpl(this, this));
+        }
+        return takePhoto;
+    }
+
+    @Override
+    public void takeSuccess(TResult result) {
+        ArrayList<TImage> resultImages = result.getImages();
+        File compressedFile;
+        for (int i = 0; i < resultImages.size(); i++) {
+            compressedFile = BitmapUtil.saveBitmapToFile(new File(resultImages.get(i).getOriginalPath()),
+                    new File(context.getExternalFilesDir(null).getPath() + "/Pictures") + "/" + UUID.randomUUID().toString() + ".0");
+
+            images.add(0,compressedFile.getAbsolutePath());
+        }
+
+//        StyledDialog.buildMdLoading("图片上传中...").setActivity(RoomPhotoActivity.this).show();
+        //TODO 压缩后上传图片，存到picture数据库，foreign为对应房间号的id，path为图片的真实存储地址
+        //TODO 点击查看图片后要在cache目录下缓存真实地址的图片一张
+        adapter.notifyDataSetChanged();
+        rvRoomPhoto.setVisibility(View.VISIBLE);
+        rlAddRoomPhotoAbove.setVisibility(View.VISIBLE);
+        llNoPhoto.setVisibility(View.GONE);
+//        StyledDialog.dismissLoading();
+
+    }
+
+    @Override
+    public void takeFail(TResult result, String msg) {
+
+    }
+
+    @Override
+    public void takeCancel() {
+
+    }
+
+
+    @Override
+    public PermissionManager.TPermissionType invoke(InvokeParam invokeParam) {
+        PermissionManager.TPermissionType type = PermissionManager.checkPermission(TContextWrap.of(this), invokeParam.getMethod());
+        if (PermissionManager.TPermissionType.WAIT.equals(type)) {
+            this.invokeParam = invokeParam;
+        }
+        return type;
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        adapter.setSelectItem(position);
+    }
+
+    @Override
+    public boolean onItemLongClick(View view, int position) {
+        //长按事件
+        adapter.setShowBox();
+        //设置选中的项
+        adapter.setSelectItem(position);
+        adapter.notifyDataSetChanged();
+        return true;
+    }
 
 }
