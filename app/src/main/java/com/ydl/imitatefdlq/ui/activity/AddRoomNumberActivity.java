@@ -1,6 +1,7 @@
 package com.ydl.imitatefdlq.ui.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +39,8 @@ public class AddRoomNumberActivity extends BaseActivity {
     @BindView(R.id.rv_room_config)
     RecyclerView rvRoomConfig;
 
+    private ArrayList<String> imagePath;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_add_room_number;
@@ -44,6 +49,7 @@ public class AddRoomNumberActivity extends BaseActivity {
     @Override
     protected void init(Bundle savedInstanceState) {
 
+        initData();
 
         setTitle("添加房号");
 
@@ -57,10 +63,14 @@ public class AddRoomNumberActivity extends BaseActivity {
         setTopRightButton("保存", 0, new OnClickListener() {
             @Override
             public void onClick() {
-
+                //保存到数据库
             }
         });
 
+    }
+
+    private void initData() {
+        imagePath = new ArrayList<>();
     }
 
 
@@ -75,12 +85,12 @@ public class AddRoomNumberActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_add_room_photo:
-                Intent addRoomPhotoIntent = new Intent(this,RoomPhotoActivity.class);
-                startActivityForResult(addRoomPhotoIntent,ROOM_PHOTO);
+                Intent addRoomPhotoIntent = new Intent(this, RoomPhotoActivity.class);
+                startActivityForResult(addRoomPhotoIntent, ROOM_PHOTO);
                 break;
             case R.id.ll_add_room_config:
-                Intent addRoomConfigIntent = new Intent(this,RoomConfigActivity.class);
-                startActivityForResult(addRoomConfigIntent,ROOM_CONFIG);
+                Intent addRoomConfigIntent = new Intent(this, RoomConfigActivity.class);
+                startActivityForResult(addRoomConfigIntent, ROOM_CONFIG);
                 break;
         }
     }
@@ -88,17 +98,21 @@ public class AddRoomNumberActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
             case ROOM_PHOTO:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     //TODO 返回选取的照片
+                    imagePath.addAll(data.getStringArrayListExtra("imagePath"));
+                    ivRoomPhoto.setImageURI(Uri.parse(imagePath.get(0)));
+                    tvRoomAmount.setText(imagePath.size() + "张");
                 }
                 break;
             case ROOM_CONFIG:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     //TODO 返回选取的房间配置
                 }
         }
 
     }
+
 }

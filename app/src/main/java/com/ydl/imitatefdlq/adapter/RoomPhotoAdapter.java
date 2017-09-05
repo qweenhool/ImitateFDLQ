@@ -1,9 +1,8 @@
 package com.ydl.imitatefdlq.adapter;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,7 @@ import java.util.Map;
 
 public class RoomPhotoAdapter extends RecyclerView.Adapter<RoomPhotoAdapter.RoomPhotoViewHolder> implements View.OnClickListener, View.OnLongClickListener {
 
-    private ArrayList<String> result;
+    private ArrayList<Bitmap> bitmapList;
     private Context context;
 
     private OnItemClickListener itemClickListener;
@@ -36,9 +35,9 @@ public class RoomPhotoAdapter extends RecyclerView.Adapter<RoomPhotoAdapter.Room
     // 存储勾选框状态的map集合
     private Map<Integer, Boolean> map = new HashMap<>();
 
-    public RoomPhotoAdapter(Context context, ArrayList<String> result) {
+    public RoomPhotoAdapter(Context context, ArrayList<Bitmap> bitmapList) {
         this.context = context;
-        this.result = result;
+        this.bitmapList = bitmapList;
         initMap();
     }
 
@@ -52,7 +51,8 @@ public class RoomPhotoAdapter extends RecyclerView.Adapter<RoomPhotoAdapter.Room
 
     @Override
     public void onBindViewHolder(RoomPhotoViewHolder holder, final int position) {
-        holder.ivRoomPhoto.setImageURI(Uri.parse(result.get(position)));
+
+        holder.ivRoomPhoto.setImageBitmap(bitmapList.get(position));
 
         //长按显示/隐藏
         if (isShowBox) {
@@ -62,7 +62,7 @@ public class RoomPhotoAdapter extends RecyclerView.Adapter<RoomPhotoAdapter.Room
         }
 
         //设置Tag
-        holder.view.setTag(position);
+        holder.itemView.setTag(position);
         //设置checkBox改变监听
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -77,12 +77,11 @@ public class RoomPhotoAdapter extends RecyclerView.Adapter<RoomPhotoAdapter.Room
             map.put(position, false);
         }
         holder.checkBox.setChecked(map.get(position));
-        Log.e("RoomPhotoAdapter", "onBindViewHolder --> " );
     }
 
     @Override
     public int getItemCount() {
-        return result.size();
+        return bitmapList.size();
     }
 
     @Override
@@ -100,15 +99,14 @@ public class RoomPhotoAdapter extends RecyclerView.Adapter<RoomPhotoAdapter.Room
         return itemLongClickListener != null && itemLongClickListener.onItemLongClick(v, (Integer) v.getTag());
     }
 
-    class RoomPhotoViewHolder extends RecyclerView.ViewHolder{
+    class RoomPhotoViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivRoomPhoto;
         CheckBox checkBox;
-        View view;
 
         public RoomPhotoViewHolder(View itemView) {
             super(itemView);
-            this.view = itemView;
+
             ivRoomPhoto = (ImageView) itemView.findViewById(R.id.iv_room_photo);
             checkBox = (CheckBox) itemView.findViewById(R.id.cb);
         }
@@ -116,7 +114,7 @@ public class RoomPhotoAdapter extends RecyclerView.Adapter<RoomPhotoAdapter.Room
 
     //初始化map集合,默认为不选中
     private void initMap() {
-        for (int i = 0; i < result.size(); i++) {
+        for (int i = 0; i < bitmapList.size(); i++) {
             map.put(i, false);
         }
     }

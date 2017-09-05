@@ -79,9 +79,9 @@
                 android:clickable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingBottom="5dp"
+                android:paddingBottom="10dp"
                 android:paddingLeft="15dp"
-                android:paddingTop="5dp">
+                android:paddingTop="10dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -92,22 +92,22 @@
 
                 <RelativeLayout
                     android:id="@+id/rl_add_room_photo"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginRight="10dp">
 
                     <ImageView
                         android:id="@+id/iv_room_photo"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/ic_room_photo" />
+                        android:src="@drawable/ic_room_photo"
+                        android:scaleType="centerCrop"/>
 
                     <TextView
                         android:id="@+id/tv_room_amount"
                         android:layout_width="match_parent"
-                        android:layout_height="21dp"
+                        android:layout_height="22dp"
                         android:layout_alignParentBottom="true"
-                        android:layout_margin="4dp"
                         android:background="#9f8c8c8c"
                         android:gravity="center"
                         android:text="0张"

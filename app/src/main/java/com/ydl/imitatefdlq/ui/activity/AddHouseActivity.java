@@ -133,6 +133,7 @@ public class AddHouseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_house);
         ButterKnife.bind(this);
+
         StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
         EditTextUtils.clearButtonListener(etAddHouseName, ivClear);
 
