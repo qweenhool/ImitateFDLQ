@@ -1,20 +1,30 @@
 package com.ydl.imitatefdlq.ui.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ydl.imitatefdlq.AppApplication;
 import com.ydl.imitatefdlq.R;
+import com.ydl.imitatefdlq.entity.DaoSession;
+import com.ydl.imitatefdlq.entity.PictureBean;
+import com.ydl.imitatefdlq.entity.PictureBeanDao;
+import com.ydl.imitatefdlq.entity.RoomBean;
+import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
+import com.ydl.imitatefdlq.util.BitmapUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +50,9 @@ public class AddRoomNumberActivity extends BaseActivity {
     RecyclerView rvRoomConfig;
 
     private ArrayList<String> imagePath;
+    private RoomBeanDao roomBeanDao;
+    private PictureBeanDao pictureBeanDao;
+
 
     @Override
     protected int getContentView() {
@@ -63,14 +76,46 @@ public class AddRoomNumberActivity extends BaseActivity {
         setTopRightButton("保存", 0, new OnClickListener() {
             @Override
             public void onClick() {
-                //保存到数据库
+                if (!TextUtils.isEmpty(etRoomName.getText().toString().trim())) {
+                    //TODO 设置orderNumber用来排序
+                    String uuid = UUID.randomUUID().toString();
+                    RoomBean roomBean = new RoomBean();
+                    roomBean.setId(uuid);
+                    roomBean.setDataUpload(0);
+                    roomBean.setHouseId(getIntent().getStringExtra("house_id"));
+                    roomBean.setRoomName(etRoomName.getText().toString());
+                    roomBeanDao.insert(roomBean);
+
+                    if (imagePath != null && imagePath.size() != 0) {
+                        for (int i = 0; i < imagePath.size(); i++) {
+                            PictureBean pictureBean = new PictureBean();
+                            pictureBean.setId(UUID.randomUUID().toString());
+                            pictureBean.setPath(imagePath.get(i));
+                            pictureBean.setForeignId(uuid);
+                            pictureBean.setOrderNumber(new Date());
+                            pictureBean.setDataUpload(0);
+                            pictureBean.setUploadUrl(null);
+                            pictureBeanDao.insert(pictureBean);
+                        }
+
+                    }
+                    Intent intent = new Intent();
+                    intent.putExtra("room_id",uuid);
+                    setResult(RESULT_OK,intent);
+                    finish();
+
+                } else {
+                    Toast.makeText(AddRoomNumberActivity.this, "房号不能为空", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
     }
 
     private void initData() {
-        imagePath = new ArrayList<>();
+        DaoSession daoSession = AppApplication.getInstance().getDaoSession();
+        roomBeanDao = daoSession.getRoomBeanDao();
+        pictureBeanDao = daoSession.getPictureBeanDao();
     }
 
 
@@ -102,8 +147,11 @@ public class AddRoomNumberActivity extends BaseActivity {
             case ROOM_PHOTO:
                 if (resultCode == RESULT_OK) {
                     //TODO 返回选取的照片
-                    imagePath.addAll(data.getStringArrayListExtra("imagePath"));
-                    ivRoomPhoto.setImageURI(Uri.parse(imagePath.get(0)));
+
+                    imagePath = data.getStringArrayListExtra("imagePath");
+                    String firstImagePath = imagePath.get(0);
+                    //只显示第一张图片
+                    ivRoomPhoto.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(firstImagePath, 90, 90));
                     tvRoomAmount.setText(imagePath.size() + "张");
                 }
                 break;

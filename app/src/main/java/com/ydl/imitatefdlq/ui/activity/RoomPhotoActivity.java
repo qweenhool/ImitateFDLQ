@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -241,10 +240,14 @@ public class RoomPhotoActivity extends BaseActivity implements TakePhoto.TakeRes
             public void run() {
                 DiskLruCache diskLruCache = DiskLruCacheUtil.getDiskLruCache(RoomPhotoActivity.this);
                 ArrayList<TImage> images = result.getImages();
+                String originalPath;
                 for (int i = 0; i < images.size(); i++) {
-                    String originalPath = images.get(i).getOriginalPath();
+                    originalPath = images.get(i).getOriginalPath();
+                    //用于返回给AddRoomNumberActivity，用来保存到数据库
                     imagePath.add(0, originalPath);
+                    //给adapter的数据
                     bitmapList.add(0, BitmapUtil.decodeSampledBitmapFromFile(originalPath, 90, 90));
+                    //缓存到xBitmapCache下，干嘛用的？
                     try {
                         DiskLruCache.Editor editor = diskLruCache.edit(MD5Encoder.encode(originalPath));
                         OutputStream outputStream = editor.newOutputStream(0);
@@ -333,12 +336,11 @@ public class RoomPhotoActivity extends BaseActivity implements TakePhoto.TakeRes
 
     @Override
     public void onBackPressed() {
+        //点击返回键，把选中的图片真实地址返回给AddRoomNumberActivity
         if (imagePath.size() != 0) {
             Intent intent = new Intent();
             intent.putExtra("imagePath", imagePath);
             setResult(RESULT_OK, intent);
-            int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-            Log.e("RoomPhotoActivity", "maxMemory --> " + maxMemory);
         }
         finish();
     }
