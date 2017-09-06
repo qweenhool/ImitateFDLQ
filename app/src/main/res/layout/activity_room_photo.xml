@@ -2,14 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#efeff4"
+    android:background="#ffffff"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/rl_add_room_photo_above"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginBottom="10dp"
         android:background="@drawable/selector_ll_bg"
         android:clickable="true"
         android:visibility="gone">
@@ -22,28 +21,27 @@
             android:drawablePadding="5dp"
             android:gravity="center"
             android:text="添加"
-            android:textColor="#5687e7" />
+            android:textColor="#5687e7"
+            android:textSize="14sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:background="#d9d9d9" />
+            android:background="#efeff4" />
 
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_room_photo"
-        android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/ll_no_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
         android:gravity="center"
         android:orientation="vertical">
 

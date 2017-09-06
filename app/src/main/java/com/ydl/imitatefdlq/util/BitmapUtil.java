@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
@@ -14,7 +15,12 @@ import java.io.FileOutputStream;
 
 public class BitmapUtil {
 
-    //压缩图片并保存到新目录
+    /**
+     * 压缩图片并保存到新目录
+     * @param file
+     * @param newPath
+     * @return
+     */
     public static File saveBitmapToFile(File file, String newPath) {
         try {
             // BitmapFactory options to downsize the image
@@ -71,6 +77,13 @@ public class BitmapUtil {
         }
     }
 
+    /**
+     *
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
     public static int calculateInSampleSize(BitmapFactory.Options options,
                                             int reqWidth, int reqHeight) {
         // 源图片的高度和宽度
@@ -88,6 +101,14 @@ public class BitmapUtil {
         return inSampleSize;
     }
 
+    /**
+     *
+     * @param res
+     * @param resId
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
                                                          int reqWidth, int reqHeight) {
         // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
@@ -98,9 +119,17 @@ public class BitmapUtil {
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         // 使用获取到的inSampleSize值再次解析图片
         options.inJustDecodeBounds = false;
+
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
+    /**
+     *
+     * @param filePath
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
     public static Bitmap decodeSampledBitmapFromFile(String filePath, int reqWidth, int reqHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;  //只返回图片的大小信息
@@ -109,6 +138,26 @@ public class BitmapUtil {
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
+
         return BitmapFactory.decodeFile(filePath, options);
+    }
+
+    /**
+     *
+     * @param fileDescriptor
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    public static Bitmap decodeSampledBitmapFromFD(FileDescriptor fileDescriptor, int reqWidth, int reqHeight) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;  //只返回图片的大小信息
+        BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
     }
 }

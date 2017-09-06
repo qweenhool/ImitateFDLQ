@@ -23,7 +23,8 @@ public class DiskLruCacheUtil {
             if (!cacheDir.exists()) {
                 cacheDir.mkdirs();
             }
-            mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(context), 1, 10 * 1024 * 1024);
+            //设置50M的缓存
+            mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(context), 1, 50 * 1024 * 1024);
             return mDiskLruCache;
         } catch (IOException e) {
             e.printStackTrace();

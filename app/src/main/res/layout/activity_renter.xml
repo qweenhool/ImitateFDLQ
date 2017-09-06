@@ -13,7 +13,7 @@
         android:paddingLeft="15dp">
 
         <TextView
-            android:id="@+id/tv_house_name"
+            android:id="@+id/tv_room_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -24,13 +24,13 @@
             />
 
         <TextView
-            android:id="@+id/tv_house_type"
+            android:id="@+id/tv_house_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="房产名"
             android:layout_marginTop="5dp"
             android:textSize="12sp"
-            android:layout_below="@id/tv_house_name"
+            android:layout_below="@id/tv_room_name"
             android:textColor="#81838e"/>
 
         <ImageView
@@ -74,13 +74,13 @@
         android:layout_marginBottom="10dp"/>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/refresh_layout_room_number"
+        android:id="@+id/refresh_layout_renter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_room_number"
+            android:id="@+id/rv_renter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />

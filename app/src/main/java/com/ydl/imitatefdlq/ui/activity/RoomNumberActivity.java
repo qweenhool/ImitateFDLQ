@@ -207,7 +207,7 @@ public class RoomNumberActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        //从修改页面返回，更新数据
+        //从修改房产页面返回，更新数据
         List<HouseBean> houseBeanList = houseBeanDao.queryBuilder()
                 .where(HouseBeanDao.Properties.Id.eq(houseId))
                 .list();
@@ -226,8 +226,14 @@ public class RoomNumberActivity extends BaseActivity {
         }
 
         //从添加房号页面返回
-        adapter.notifyDataSetChanged();
-
+        if (roomBeanList.size() != 0) {
+            refreshLayoutRoomNumber.setVisibility(View.VISIBLE);
+            llHint.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
+        } else {
+            refreshLayoutRoomNumber.setVisibility(View.GONE);
+            llHint.setVisibility(View.VISIBLE);
+        }
 
     }
 

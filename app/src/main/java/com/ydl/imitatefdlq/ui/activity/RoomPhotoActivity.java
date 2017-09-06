@@ -3,7 +3,6 @@ package com.ydl.imitatefdlq.ui.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
-import com.jakewharton.disklrucache.DiskLruCache;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
 import com.jph.takephoto.model.InvokeParam;
@@ -33,17 +31,11 @@ import com.jph.takephoto.permission.PermissionManager;
 import com.jph.takephoto.permission.TakePhotoInvocationHandler;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.adapter.RoomPhotoAdapter;
+import com.ydl.imitatefdlq.adapter.SpacesItemDecoration;
 import com.ydl.imitatefdlq.interfaze.OnItemClickListener;
 import com.ydl.imitatefdlq.interfaze.OnItemLongClickListener;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
-import com.ydl.imitatefdlq.util.BitmapUtil;
-import com.ydl.imitatefdlq.util.DiskLruCacheUtil;
-import com.ydl.imitatefdlq.util.MD5Encoder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,9 +61,7 @@ public class RoomPhotoActivity extends BaseActivity implements TakePhoto.TakeRes
     private TakePhoto takePhoto;
     private InvokeParam invokeParam;
     private ArrayList<String> imagePath;
-    private ArrayList<Bitmap> bitmapList;
     private RoomPhotoAdapter adapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,13 +112,55 @@ public class RoomPhotoActivity extends BaseActivity implements TakePhoto.TakeRes
         optionsList.add("从手机相册选择");
 
         imagePath = new ArrayList<>();
-        bitmapList = new ArrayList<>();
+
+        ArrayList<String> imagePathFromIntent = getIntent().getStringArrayListExtra("image_path");
+        if (imagePathFromIntent != null && imagePathFromIntent.size() != 0) {
+            imagePath.addAll(imagePathFromIntent);
+
+        }
+
         rvRoomPhoto.setLayoutManager(new GridLayoutManager(this, 4));
-        adapter = new RoomPhotoAdapter(RoomPhotoActivity.this, bitmapList);
-        adapter.setItemClickListener(this);
-        adapter.setItemLongClickListener(this);
+        rvRoomPhoto.addItemDecoration(new SpacesItemDecoration(4, 3, false));
+        adapter = new RoomPhotoAdapter(RoomPhotoActivity.this, imagePath, rvRoomPhoto);
         rvRoomPhoto.setAdapter(adapter);
 
+        adapter.setItemClickListener(this);
+        adapter.setItemLongClickListener(this);
+
+        if (imagePath.size() != 0) {
+            adapter.notifyDataSetChanged();
+            llNoPhoto.setVisibility(View.GONE);
+            rvRoomPhoto.setVisibility(View.VISIBLE);
+            rlAddRoomPhotoAbove.setVisibility(View.VISIBLE);
+
+        } else {
+            llNoPhoto.setVisibility(View.VISIBLE);
+            rvRoomPhoto.setVisibility(View.GONE);
+            rlAddRoomPhotoAbove.setVisibility(View.GONE);
+        }
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (imagePath.size() != 0) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        adapter.flushCache();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 退出程序时结束所有的下载任务
+        adapter.cancelAllTasks();
     }
 
     @OnClick({R.id.rl_add_room_photo_above, R.id.btn_add_room_photo})
@@ -211,7 +243,6 @@ public class RoomPhotoActivity extends BaseActivity implements TakePhoto.TakeRes
         }
     }
 
-
     /**
      * 获取TakePhoto实例
      *
@@ -226,54 +257,21 @@ public class RoomPhotoActivity extends BaseActivity implements TakePhoto.TakeRes
 
     @Override
     public void takeSuccess(final TResult result) {
-
         StyledDialog.buildMdLoading("图片上传中...").setActivity(RoomPhotoActivity.this).show();
+        ArrayList<TImage> images = result.getImages();
+        String originalPath;
+        for (int i = 0; i < images.size(); i++) {
+            originalPath = images.get(i).getOriginalPath();
+            //用于返回给AddRoomNumberActivity，用来保存到数据库
+            imagePath.add(0, originalPath);
+        }
+        adapter.notifyDataSetChanged();
         llNoPhoto.setVisibility(View.GONE);
         rvRoomPhoto.setVisibility(View.VISIBLE);
         rlAddRoomPhotoAbove.setVisibility(View.VISIBLE);
+        StyledDialog.dismissLoading();
 
         //TODO 压缩后上传图片
-
-        //使用DiskLruCache缓存到xBitmapCache目录
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                DiskLruCache diskLruCache = DiskLruCacheUtil.getDiskLruCache(RoomPhotoActivity.this);
-                ArrayList<TImage> images = result.getImages();
-                String originalPath;
-                for (int i = 0; i < images.size(); i++) {
-                    originalPath = images.get(i).getOriginalPath();
-                    //用于返回给AddRoomNumberActivity，用来保存到数据库
-                    imagePath.add(0, originalPath);
-                    //给adapter的数据
-                    bitmapList.add(0, BitmapUtil.decodeSampledBitmapFromFile(originalPath, 90, 90));
-                    //缓存到xBitmapCache下，干嘛用的？
-                    try {
-                        DiskLruCache.Editor editor = diskLruCache.edit(MD5Encoder.encode(originalPath));
-                        OutputStream outputStream = editor.newOutputStream(0);
-                        cacheFile(originalPath, outputStream);
-                        editor.commit();
-                        diskLruCache.flush();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                        StyledDialog.dismissLoading();
-                    }
-                });
-
-            }
-        }).start();
-
-        //TODO 压缩后上传图片，存到picture数据库，foreign为对应房间号的id，path为图片的真实存储地址
-        //TODO 点击查看图片后要在cache目录下缓存真实地址的图片一张
-
 
     }
 
@@ -286,29 +284,6 @@ public class RoomPhotoActivity extends BaseActivity implements TakePhoto.TakeRes
     public void takeCancel() {
 
     }
-
-
-    public void cacheFile(String srcPath, OutputStream outputStream) {
-        try {
-            int byteSum = 0;
-            int byteRead = 0;
-            File srcFile = new File(srcPath);
-            if (srcFile.exists()) { //文件存在时
-                InputStream inStream = new FileInputStream(srcPath); //读入原文件,读入到代码中
-                byte[] buffer = new byte[1444];
-                while ((byteRead = inStream.read(buffer)) != -1) {
-                    byteSum += byteRead; //字节数 文件大小
-                    outputStream.write(buffer, 0, byteRead);
-                }
-                inStream.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-
-    }
-
 
     @Override
     public PermissionManager.TPermissionType invoke(InvokeParam invokeParam) {

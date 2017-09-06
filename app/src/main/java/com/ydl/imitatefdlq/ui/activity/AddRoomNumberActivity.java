@@ -24,6 +24,7 @@ import com.ydl.imitatefdlq.util.BitmapUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -77,9 +78,16 @@ public class AddRoomNumberActivity extends BaseActivity {
             @Override
             public void onClick() {
                 if (!TextUtils.isEmpty(etRoomName.getText().toString().trim())) {
-                    //TODO 设置orderNumber用来排序
                     String uuid = UUID.randomUUID().toString();
                     RoomBean roomBean = new RoomBean();
+                    List<RoomBean> list = roomBeanDao.queryBuilder()
+                            .orderDesc(RoomBeanDao.Properties.OrderNumber)
+                            .list();
+                    if(list.size()!=0){
+                        roomBean.setOrderNumber(list.get(0).getOrderNumber()+1);
+                    }else {
+                        roomBean.setOrderNumber(1);
+                    }
                     roomBean.setId(uuid);
                     roomBean.setDataUpload(0);
                     roomBean.setHouseId(getIntent().getStringExtra("house_id"));
@@ -97,7 +105,6 @@ public class AddRoomNumberActivity extends BaseActivity {
                             pictureBean.setUploadUrl(null);
                             pictureBeanDao.insert(pictureBean);
                         }
-
                     }
                     Intent intent = new Intent();
                     intent.putExtra("room_id",uuid);
@@ -131,6 +138,9 @@ public class AddRoomNumberActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.rl_add_room_photo:
                 Intent addRoomPhotoIntent = new Intent(this, RoomPhotoActivity.class);
+                if(imagePath!=null){
+                    addRoomPhotoIntent.putExtra("image_path",imagePath);
+                }
                 startActivityForResult(addRoomPhotoIntent, ROOM_PHOTO);
                 break;
             case R.id.ll_add_room_config:
