@@ -161,7 +161,7 @@ public class AddRoomNumberActivity extends BaseActivity {
                     imagePath = data.getStringArrayListExtra("imagePath");
                     String firstImagePath = imagePath.get(0);
                     //只显示第一张图片
-                    ivRoomPhoto.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(firstImagePath, 90, 90));
+                    ivRoomPhoto.setImageBitmap(BitmapUtil.decodeSampledBitmapFromPath(firstImagePath, 50, 50));
                     tvRoomAmount.setText(imagePath.size() + "张");
                 }
                 break;

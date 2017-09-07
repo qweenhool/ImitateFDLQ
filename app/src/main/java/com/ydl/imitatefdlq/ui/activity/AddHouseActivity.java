@@ -54,7 +54,7 @@ import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.fragment.AddRoomFragment;
 import com.ydl.imitatefdlq.ui.fragment.BatchAddRoomFragment;
 import com.ydl.imitatefdlq.util.BitmapUtil;
-import com.ydl.imitatefdlq.util.EditTextUtils;
+import com.ydl.imitatefdlq.util.EditTextUtil;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 import java.io.File;
@@ -135,7 +135,7 @@ public class AddHouseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
-        EditTextUtils.clearButtonListener(etAddHouseName, ivClear);
+        EditTextUtil.clearButtonListener(etAddHouseName, ivClear);
 
         initData();
 
@@ -389,21 +389,22 @@ public class AddHouseActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    StyledDialog.buildLoading("请稍后").show();
                     //Todo 同时在Android/data/包名/cache/xBitmapCache下也缓存一张压缩过的（一长串数字.0），有何用？
                     picUUID = UUID.randomUUID().toString();
-                    File compressedFile = BitmapUtil.saveBitmapToFile(file, pictures.getPath() + "/" + picUUID + ".jpg");
-                    Bitmap bitmap = BitmapFactory.decodeFile(compressedFile.getAbsolutePath());
-                    ivHousePhoto.setImageBitmap(bitmap);
+                    //压缩后缓存一份
+                    BitmapUtil.decodeSampledBitmapFromFile(file, pictures.getPath() + File.separator + picUUID + ".jpg");
+                    //压缩到控件大小后显示
+                    Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromPath(file.getAbsolutePath(), 50, 50);
+                    if (bitmap != null) {
+                        ivHousePhoto.setImageBitmap(bitmap);
+                    }
                     if (!housePhotoList.contains("删除")) {
                         housePhotoList.add("删除");
                     }
-                    StyledDialog.dismissLoading();
                 }
                 break;
             case CHOOSE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    StyledDialog.buildLoading("请稍后").show();
                     // 判断手机系统版本号
                     if (Build.VERSION.SDK_INT >= 19) {
                         // 4.4及以上系统使用这个方法处理图片
@@ -417,8 +418,8 @@ public class AddHouseActivity extends AppCompatActivity {
                     }
                     picUUID = UUID.randomUUID().toString();
                     //把imagePath所在的图片复制到Android/data/包名/files/Pictures目录下并更名为pictures.getPath() + "/" + picUUID + ".jpg"
-                    copyFile(imagePath, pictures.getPath() + "/" + picUUID + ".jpg");
-                    StyledDialog.dismissLoading();
+                    //TODO 有问题！图片不一定是jpg格式
+                    copyFile(imagePath, pictures.getPath() + File.separator + picUUID + ".jpg");
                 }
                 break;
             default:
@@ -568,7 +569,7 @@ public class AddHouseActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View view = getCurrentFocus();
-            if (EditTextUtils.isShouldHideInput(view, ev)) {
+            if (EditTextUtil.isShouldHideInput(view, ev)) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

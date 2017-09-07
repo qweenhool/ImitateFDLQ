@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 /**
@@ -17,19 +18,20 @@ public class BitmapUtil {
 
     /**
      * 压缩图片并保存到新目录
-     * @param file
-     * @param newPath
+     *
+     * @param srcFile
+     * @param desPath
      * @return
      */
-    public static File saveBitmapToFile(File file, String newPath) {
+    public static File saveBitmapToFile(File srcFile, String desPath) {
         try {
             // BitmapFactory options to downsize the image
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
-            o.inSampleSize = 6;
+            o.inSampleSize = 2;
             // factor of downsizing the image
 
-            FileInputStream inputStream = new FileInputStream(file);
+            FileInputStream inputStream = new FileInputStream(srcFile);
             //Bitmap selectedBitmap = null;
             BitmapFactory.decodeStream(inputStream, null, o);
             inputStream.close();
@@ -46,7 +48,7 @@ public class BitmapUtil {
 
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
-            inputStream = new FileInputStream(file);
+            inputStream = new FileInputStream(srcFile);
 
             Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
             inputStream.close();
@@ -60,25 +62,24 @@ public class BitmapUtil {
 //            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , outputStream);
 
 
-            File aa = new File(newPath);
+            File desFile = new File(desPath);
 
-            FileOutputStream outputStream = new FileOutputStream(aa);
+            FileOutputStream outputStream = new FileOutputStream(desFile);
 
             //choose another format if PNG doesn't suit you
 
             selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
 
 
-            String filepath = aa.getAbsolutePath();
+            String filepath = desFile.getAbsolutePath();
 
-            return aa;
+            return desFile;
         } catch (Exception e) {
             return null;
         }
     }
 
     /**
-     *
      * @param options
      * @param reqWidth
      * @param reqHeight
@@ -102,7 +103,6 @@ public class BitmapUtil {
     }
 
     /**
-     *
      * @param res
      * @param resId
      * @param reqWidth
@@ -123,27 +123,42 @@ public class BitmapUtil {
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
+    public static void decodeSampledBitmapFromFile(File srcFile, String desPath) {
+        try {
+            // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(srcFile.getAbsolutePath(), options);
+
+            options.inSampleSize = 2;
+            options.inJustDecodeBounds = false;
+            Bitmap bitmap = BitmapFactory.decodeFile(srcFile.getAbsolutePath(), options);
+            FileOutputStream fos = new FileOutputStream(desPath);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
-     *
-     * @param filePath
+     * @param srcPath
      * @param reqWidth
      * @param reqHeight
      * @return
      */
-    public static Bitmap decodeSampledBitmapFromFile(String filePath, int reqWidth, int reqHeight) {
+    public static Bitmap decodeSampledBitmapFromPath(String srcPath, int reqWidth, int reqHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;  //只返回图片的大小信息
-        BitmapFactory.decodeFile(filePath, options);
+        BitmapFactory.decodeFile(srcPath, options);
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
 
-        return BitmapFactory.decodeFile(filePath, options);
+        return BitmapFactory.decodeFile(srcPath, options);
     }
 
     /**
-     *
      * @param fileDescriptor
      * @param reqWidth
      * @param reqHeight

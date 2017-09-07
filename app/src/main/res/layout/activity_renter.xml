@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="#ffffff"
-        android:paddingLeft="15dp">
+        android:paddingLeft="20dp">
 
         <TextView
             android:id="@+id/tv_room_name"

@@ -157,7 +157,7 @@
                         android:layout_height="50dp"
                         android:layout_marginRight="15dp"
                         android:src="@drawable/ic_add_photo"
-                        app:borderRadius="30"/>
+                        app:borderRadius="30" />
                 </LinearLayout>
 
                 <View
@@ -235,25 +235,24 @@
 
                 <CheckBox
                     android:id="@+id/cb_add_house_number"
-                    android:button="@drawable/selector_batch_add_room"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:layout_marginRight="8dp"
-                    android:layout_marginTop="12dp" />
+                    android:layout_marginTop="12dp"
+                    android:button="@drawable/selector_batch_add_room" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#d9d9d9"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="10dp"
+                android:background="#d9d9d9" />
 
             <FrameLayout
                 android:id="@+id/fl_add_room_number"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
+                android:layout_height="match_parent" />
         </LinearLayout>
     </ScrollView>
 

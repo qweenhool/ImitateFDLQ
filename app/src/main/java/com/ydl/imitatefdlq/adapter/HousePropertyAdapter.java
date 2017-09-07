@@ -1,7 +1,7 @@
 package com.ydl.imitatefdlq.adapter;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +18,7 @@ import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
+import com.ydl.imitatefdlq.util.BitmapUtil;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
 import java.util.List;
@@ -62,7 +63,11 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
                 .where(PictureBeanDao.Properties.ForeignId.eq(mHouseBeanList.get(position).getId()))
                 .list();
         if (pictureBeanList.size() != 0) {//有房产照片的话就设置照片
-            holder.housePhoto.setImageURI(Uri.parse(pictureBeanList.get(0).getPath()));
+            //TODO 压缩图片
+            Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromPath(pictureBeanList.get(0).getPath(), 50, 50);
+            holder.housePhoto.setImageBitmap(bitmap);
+        } else {
+            holder.housePhoto.setImageResource(R.drawable.room_info);
         }
         //设置房产名
         holder.houseName.setText(mHouseBeanList.get(position).getHouseName());

@@ -83,7 +83,7 @@ public class AddAccountActivity extends BaseActivity {
                 String uuid = UUID.randomUUID().toString();
                 //返回最新的一条数据给上一个activity
                 Intent intent = new Intent();
-                intent.putExtra("uuid",uuid);
+                intent.putExtra("uuid", uuid);
 
                 switch (type) {//从JDK7开始加入支持String类型
                     case "bank_card":
@@ -117,7 +117,7 @@ public class AddAccountActivity extends BaseActivity {
                             payeeAccountBean.setRemark(etRemark.getText().toString());
                         }
                         payeeAccountBeanDao.insert(payeeAccountBean);
-                        setResult(RESULT_OK,intent);
+                        setResult(RESULT_OK, intent);
                         finish();
                         break;
                     case "wechat":
@@ -135,7 +135,7 @@ public class AddAccountActivity extends BaseActivity {
                             payeeAccountBean.setRemark(etRemark.getText().toString());
                         }
                         payeeAccountBeanDao.insert(payeeAccountBean);
-                        setResult(RESULT_OK,intent);
+                        setResult(RESULT_OK, intent);
                         finish();
                         break;
                     case "alipay":
@@ -153,7 +153,7 @@ public class AddAccountActivity extends BaseActivity {
                             payeeAccountBean.setRemark(etRemark.getText().toString());
                         }
                         payeeAccountBeanDao.insert(payeeAccountBean);
-                        setResult(RESULT_OK,intent);
+                        setResult(RESULT_OK, intent);
                         finish();
                         break;
                     case "other":
@@ -168,7 +168,7 @@ public class AddAccountActivity extends BaseActivity {
                             return;
                         }
                         payeeAccountBeanDao.insert(payeeAccountBean);
-                        setResult(RESULT_OK,intent);
+                        setResult(RESULT_OK, intent);
                         finish();
                         break;
                     default:

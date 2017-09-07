@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ydl.imitatefdlq.R;
-import com.ydl.imitatefdlq.util.EditTextUtils;
+import com.ydl.imitatefdlq.util.EditTextUtil;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 public class SearchActivity extends AppCompatActivity {
@@ -45,6 +45,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        EditTextUtils.clearButtonListener(search,clear);
+        EditTextUtil.clearButtonListener(search,clear);
     }
 }

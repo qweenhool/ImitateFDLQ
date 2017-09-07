@@ -1,9 +1,9 @@
 package com.ydl.imitatefdlq.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -14,7 +14,6 @@ import com.ydl.imitatefdlq.ui.fragment.HomePageFragment;
 import com.ydl.imitatefdlq.ui.fragment.HousePropertyFragment;
 import com.ydl.imitatefdlq.ui.fragment.MyselfFragment;
 import com.ydl.imitatefdlq.ui.fragment.ThirdFragment;
-import com.ydl.imitatefdlq.util.StatusBarCompat;
 import com.ydl.imitatefdlq.widget.NoScrollViewPager;
 
 import java.util.ArrayList;
@@ -36,18 +35,31 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void init(Bundle savedInstanceState) {
 
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
-        toolbar.setVisibility(View.GONE);
         initView();
         initData();
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = getIntent();
+        String homeProperty = intent.getStringExtra("home_property");
+        if (homeProperty != null && homeProperty.equals("home_property")) {
+            mViewPager.setCurrentItem(1);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
 
     private void initView() {
         mViewPager = (NoScrollViewPager) findViewById(R.id.view_pager);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
-
+        toolbar.setVisibility(View.GONE);
     }
 
     private void initData() {

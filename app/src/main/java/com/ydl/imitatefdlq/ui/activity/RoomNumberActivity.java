@@ -1,11 +1,10 @@
 package com.ydl.imitatefdlq.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +32,7 @@ import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
+import com.ydl.imitatefdlq.util.BitmapUtil;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
 import java.util.ArrayList;
@@ -50,8 +50,7 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class RoomNumberActivity extends BaseActivity {
 
-    private static final int DELETE_FINISH = 1;
-    private static final int ADD_FINISH = 2;
+    private static final int ADD_FINISH = 1;
 
     @BindView(R.id.riv_house_photo)
     RoundImageView rivHousePhoto;
@@ -107,10 +106,9 @@ public class RoomNumberActivity extends BaseActivity {
         roomBeanDao = daoSession.getRoomBeanDao();
         pictureBeanDao = daoSession.getPictureBeanDao();
 
-        Intent intent = getIntent();
-        houseId = intent.getStringExtra("house_id");
+        houseId = getIntent().getStringExtra("house_id");
 
-        if (houseId != null) {
+        if (houseId != null) {//如果是从startActivity过来的
             List<HouseBean> houseBeanList = houseBeanDao.queryBuilder()
                     .where(HouseBeanDao.Properties.Id.eq(houseId))
                     .list();
@@ -118,12 +116,18 @@ public class RoomNumberActivity extends BaseActivity {
             tvHouseName.setText(houseBeanList.get(0).getHouseName());
             //设置房产类型
             tvHouseType.setText(houseBeanList.get(0).getHouseType());
-            //设置房产照片:根据picture表中的foreignId查到
+            //设置房产照片
             List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
-                    .where(PictureBeanDao.Properties.ForeignId.eq(houseBeanList.get(0).getId()))
+                    .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
                     .list();
             if (pictureBeanList.size() != 0) {
-                rivHousePhoto.setImageURI(Uri.parse(pictureBeanList.get(0).getPath()));
+                //TODO 先检查内存中有没有缓存
+                Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromPath(pictureBeanList.get(0).getPath(), 50, 50);
+                if (bitmap != null) {
+                    rivHousePhoto.setImageBitmap(bitmap);
+                }
+            } else {
+                rivHousePhoto.setImageResource(R.drawable.room_info);
             }
             //显示房间列表
             roomBeanList = new ArrayList<>();
@@ -142,7 +146,7 @@ public class RoomNumberActivity extends BaseActivity {
                 @Override
                 public void onItemClick(View view, int position) {
                     Intent intent = new Intent(RoomNumberActivity.this, RenterActivity.class);
-                    intent.putExtra("room_number", roomBeanList.get(position).getId());
+                    intent.putExtra("room_id", roomBeanList.get(position).getId());
                     startActivity(intent);
                 }
             });
@@ -192,55 +196,16 @@ public class RoomNumberActivity extends BaseActivity {
                 }
             });
 
-            if (roomBeanList.size() != 0) {
+            if (roomBeanList.size() != 0) {//有房间就显示列表
                 refreshLayoutRoomNumber.setVisibility(View.VISIBLE);
                 llHint.setVisibility(View.GONE);
 
-            } else {
+            } else {//没有就隐藏
                 refreshLayoutRoomNumber.setVisibility(View.GONE);
                 llHint.setVisibility(View.VISIBLE);
             }
         }
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        //从修改房产页面返回，更新数据
-        List<HouseBean> houseBeanList = houseBeanDao.queryBuilder()
-                .where(HouseBeanDao.Properties.Id.eq(houseId))
-                .list();
-        //设置房产名字
-        tvHouseName.setText(houseBeanList.get(0).getHouseName());
-        //设置房产类型
-        tvHouseType.setText(houseBeanList.get(0).getHouseType());
-        //设置房产照片
-        List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
-                .where(PictureBeanDao.Properties.ForeignId.eq(houseBeanList.get(0).getId()))
-                .list();
-        if (pictureBeanList.size() != 0) {
-            rivHousePhoto.setImageURI(Uri.parse(pictureBeanList.get(0).getPath()));
-        } else {
-            rivHousePhoto.setImageResource(R.drawable.room_info);
-        }
-
-        //从添加房号页面返回
-        if (roomBeanList.size() != 0) {
-            refreshLayoutRoomNumber.setVisibility(View.VISIBLE);
-            llHint.setVisibility(View.GONE);
-            adapter.notifyDataSetChanged();
-        } else {
-            refreshLayoutRoomNumber.setVisibility(View.GONE);
-            llHint.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Log.e("onBackPressed", "onBackPressed");
     }
 
     @OnClick({R.id.iv_edit, R.id.ll_add_room_number})
@@ -249,20 +214,25 @@ public class RoomNumberActivity extends BaseActivity {
             case R.id.iv_edit:
                 Intent modifyPropertyIntent = new Intent(this, ModifyPropertyActivity.class);
                 modifyPropertyIntent.putExtra("house_id", houseId);
-                startActivityForResult(modifyPropertyIntent, DELETE_FINISH);
+                startActivity(modifyPropertyIntent);
                 break;
             case R.id.ll_add_room_number:
                 Intent addRoomNumberIntent = new Intent(this, AddRoomNumberActivity.class);
                 addRoomNumberIntent.putExtra("house_id", houseId);
-                startActivityForResult(addRoomNumberIntent,ADD_FINISH);
+                startActivityForResult(addRoomNumberIntent, ADD_FINISH);
                 break;
         }
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
     }
 
@@ -270,19 +240,15 @@ public class RoomNumberActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case DELETE_FINISH:
-                if (resultCode == RESULT_OK) {
-                    finish();
-                }
-                break;
             case ADD_FINISH:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     String roomId = data.getStringExtra("room_id");
                     List<RoomBean> list = roomBeanDao.queryBuilder()
                             .where(RoomBeanDao.Properties.Id.eq(roomId))
                             .list();
-                    roomBeanList.add(0,list.get(0));
+                    roomBeanList.add(0, list.get(0));
                 }
+                break;
             default:
                 break;
         }

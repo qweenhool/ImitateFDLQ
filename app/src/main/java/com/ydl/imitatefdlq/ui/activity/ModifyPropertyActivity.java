@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -48,7 +49,7 @@ import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.util.BitmapUtil;
-import com.ydl.imitatefdlq.util.EditTextUtils;
+import com.ydl.imitatefdlq.util.EditTextUtil;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
@@ -105,7 +106,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
     private Uri imageUri;
     private String picUUID;
     private String imagePath;
-
+    private String houseId;
 
     //每一个对象代表一张表
     private HouseBeanDao houseBeanDao;
@@ -120,14 +121,84 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_property);
         ButterKnife.bind(this);
+
         StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
-        EditTextUtils.clearButtonListener(etHouseName, ivClear);
+        EditTextUtil.clearButtonListener(etHouseName, ivClear);
 
         initToolbar();
 
         initData();
 
         initOptionPicker();
+    }
+
+
+    @OnClick({R.id.ll_house_type, R.id.ll_house_photo, R.id.ll_receive_account, R.id.tv_delete})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.ll_house_type:
+                opvHouseType.show();
+                break;
+            case R.id.ll_house_photo://点击房产照片
+                initStyledDialog();
+                break;
+            case R.id.ll_receive_account:
+                //TODO 收款账户变更
+                break;
+            case R.id.tv_delete:
+                deleteHouse();
+                break;
+        }
+    }
+
+    private void deleteHouse() {
+        StyledDialog.buildIosAlert("删除确认", "删除房产将一并删除其所有的房号，租客及账单，您确定要删除吗？", new MyDialogListener() {
+            @Override
+            public void onFirst() {
+                //Todo 联网删除服务器数据
+
+                //删除house表中这一行数据
+                houseBeanDao.deleteByKey(houseId);
+                //删除picture表中house对应照片的数据
+                List<PictureBean> housePictureBeanList = pictureBeanDao.queryBuilder()
+                        .where(PictureBeanDao.Properties.ForeignId.
+                                eq(houseId))
+                        .list();
+                if (pictureBeanList.size() != 0) {
+                    pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());
+                }
+                //删除room表中跟房间id相关的房号
+                List<RoomBean> roomBeanList = roomBeanDao.queryBuilder()
+                        .where(RoomBeanDao.Properties.HouseId.
+                                eq(houseId))
+                        .list();
+                if (roomBeanList.size() != 0) {//房间不为空
+                    String roomId;
+                    for (int i = 0; i < roomBeanList.size(); i++) {
+                        roomId = roomBeanList.get(i).getId();
+                        roomBeanDao.deleteByKey(roomId);//删除相应的房间
+                        List<PictureBean> roomPictureBeanList = pictureBeanDao.queryBuilder()
+                                .where(PictureBeanDao.Properties.ForeignId.eq(roomId))
+                                .list();
+                        //删除picture表中room相关的照片数据
+                        if (roomPictureBeanList.size() != 0) {//第i个房间照片不为空
+                            for (int j = 0; j < roomPictureBeanList.size(); j++) {
+                                pictureBeanDao.deleteByKey(roomPictureBeanList.get(j).getId());//删除第i个房间的每一张照片
+                            }
+                        }
+                    }
+                }
+                Intent intent = new Intent(ModifyPropertyActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("home_property", "home_property");
+                startActivity(intent);
+            }
+
+            @Override
+            public void onSecond() {
+
+            }
+        }).show();
     }
 
     private void initToolbar() {
@@ -173,28 +244,29 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         pictureBeanDao = daoSession.getPictureBeanDao();
         roomBeanDao = daoSession.getRoomBeanDao();
 
-        Intent intent = getIntent();
-        String houseId = intent.getStringExtra("house_id");
+        houseId = getIntent().getStringExtra("house_id");
         houseBeanList = houseBeanDao.queryBuilder()
                 .where(HouseBeanDao.Properties.Id.eq(houseId))
                 .list();
         //设置房产名称
         etHouseName.setText(houseBeanList.get(0).getHouseName());
-        //设置房产类型
-        tvHouseType.setText(houseBeanList.get(0).getHouseType());
         //设置EditText光标在最后
         etHouseName.requestFocus();
         etHouseName.setSelection(houseBeanList.get(0).getHouseName().length());
+        //设置房产类型
+        tvHouseType.setText(houseBeanList.get(0).getHouseType());
         //获取房产照片
         pictureBeanList = pictureBeanDao.queryBuilder()
-                .where(PictureBeanDao.Properties.ForeignId.eq(houseBeanList.get(0).getId()))
+                .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
                 .list();
         if (pictureBeanList.size() != 0) {
+            //TODO 压缩后显示
             ivHousePhoto.setImageURI(Uri.parse(pictureBeanList.get(0).getPath()));
             housePhotoList.add("拍照");
             housePhotoList.add("从手机相册选择");
             housePhotoList.add("删除");
         } else {
+            ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
             housePhotoList.add("拍照");
             housePhotoList.add("从手机相册选择");
         }
@@ -237,31 +309,31 @@ public class ModifyPropertyActivity extends AppCompatActivity {
 
                     }
                 }).show();
-            } else {//没点击保存之前，表的内容不会变
+            } else {
                 //Todo 点击保存，同步服务器
 
-                //修改house表的内容
+                //同步house表的内容
                 HouseBean houseBean = houseBeanList.get(0);
                 houseBean.setHouseName(etHouseName.getText().toString());
                 houseBean.setHouseType(tvHouseType.getText().toString());
                 houseBeanDao.update(houseBean);
-                //修改picture表的内容
-                if (pictureBeanList.size() != 0) {//原来有房产照片
-                    PictureBean pictureBean = pictureBeanList.get(0);
-                    if (picUUID != null) {//不为空表示用户选择了新照片
-                        pictureBean.setPath(pictures.getAbsolutePath() + "/" + picUUID + ".jpg");
-                        pictureBean.setOrderNumber(new Date());
-                        pictureBean.setUploadUrl(null);//Todo 上传服务器地址
-                        pictureBeanDao.update(pictureBean);
-                    } else if (!housePhotoList.contains("删除")) {//表示用户删除了照片，直接更新数据库
-                        pictureBeanDao.deleteByKey(pictureBean.getId());
-                        //Todo 同时告诉服务器照片被删了
+                //同步picture表的内容
+                List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                        .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
+                        .list();
+                if (!housePhotoList.contains("删除")) {//说明用户删除了房产照片
+                    if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
+                        pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//那么删除房产照片
                     }
-                } else {//原来没有房产照片
+                } else if (picUUID != null) {//说明用户更换了房产照片
+                    if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
+                        pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//先删除旧的房产照片
+                    }
+                    //再把新的照片存进去
                     PictureBean pictureBean = new PictureBean();
                     pictureBean.setId(UUID.randomUUID().toString());
                     pictureBean.setPath(pictures.getAbsolutePath() + "/" + picUUID + ".jpg");
-                    pictureBean.setForeignId(houseBean.getId());
+                    pictureBean.setForeignId(houseId);
                     pictureBean.setOrderNumber(new Date());
                     pictureBean.setDataUpload(0);
                     pictureBean.setUploadUrl(null);//Todo 上传服务器地址
@@ -275,87 +347,42 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.ll_house_type, R.id.ll_house_photo, R.id.ll_receive_account, R.id.tv_delete})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.ll_house_type:
-                opvHouseType.show();
-                break;
-            case R.id.ll_house_photo://点击房产照片
-                initStyledDialog();
-                break;
-            case R.id.ll_receive_account:
-                break;
-            case R.id.tv_delete:
-                StyledDialog.buildIosAlert("删除确认", "删除房产将一并删除其所有的房号，租客及账单，您确定要删除吗？", new MyDialogListener() {
-                    @Override
-                    public void onFirst() {
-                        //Todo 联网删除服务器数据
-
-                        //删除house表中这一行数据
-                        houseBeanDao.delete(houseBeanList.get(0));
-                        //删除picture表中这一行数据
-                        List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
-                                .where(PictureBeanDao.Properties.ForeignId.
-                                        eq(houseBeanList.get(0).getId()))
-                                .list();
-                        if (pictureBeanList.size() != 0) {
-                            pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());
-                        }
-                        //删除room表中跟房间id相关的房号
-                        List<RoomBean> roomBeanList = roomBeanDao.queryBuilder()
-                                .where(RoomBeanDao.Properties.HouseId.
-                                        eq(houseBeanList.get(0).getId()))
-                                .list();
-                        if (roomBeanList.size() != 0) {
-                            for (int i = 0; i < roomBeanList.size(); i++) {
-                                roomBeanDao.deleteByKey(roomBeanList.get(i).getId());
-                            }
-                        }
-                        setResult(RESULT_OK);
-                        finish();
-                    }
-
-                    @Override
-                    public void onSecond() {
-
-                    }
-                }).show();
-                break;
-        }
-    }
-
     private void initStyledDialog() {
         StyledDialog.buildIosSingleChoose(housePhotoList, new MyItemDialogListener() {
             @Override
-            public void onItemClick(CharSequence charSequence, int i) {
-                if ("拍照".equals(charSequence)) {
-                    if (ContextCompat.checkSelfPermission(ModifyPropertyActivity.this,
-                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
-                        ActivityCompat.requestPermissions(ModifyPropertyActivity.this,
-                                new String[]{Manifest.permission.CAMERA}, 1);
-                    } else {//同意拍照就打开摄像头
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                        startActivityForResult(intent, TAKE_PHOTO);
+            public void onItemClick(final CharSequence charSequence, int i) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if ("拍照".equals(charSequence)) {
+                            if (ContextCompat.checkSelfPermission(ModifyPropertyActivity.this,
+                                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                                ActivityCompat.requestPermissions(ModifyPropertyActivity.this,
+                                        new String[]{Manifest.permission.CAMERA}, 1);
+                            } else {//同意拍照就打开摄像头
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                startActivityForResult(intent, TAKE_PHOTO);
+                            }
+                        } else if ("从手机相册选择".equals(charSequence)) {
+                            if (ContextCompat.checkSelfPermission(ModifyPropertyActivity.this,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                                ActivityCompat.requestPermissions(ModifyPropertyActivity.this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                            } else {//同意就打开相册
+                                Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                                intent.setType("image/*");
+                                startActivityForResult(intent, CHOOSE_PHOTO);
+                            }
+                        } else if ("删除".equals(charSequence)) {
+                            ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
+                            picUUID = null;
+                            if (housePhotoList.contains("删除")) {
+                                housePhotoList.remove("删除");
+                            }
+                        }
                     }
-                } else if ("从手机相册选择".equals(charSequence)) {
-                    if (ContextCompat.checkSelfPermission(ModifyPropertyActivity.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
-                        ActivityCompat.requestPermissions(ModifyPropertyActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    } else {//同意就打开相册
-                        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-                        intent.setType("image/*");
-                        startActivityForResult(intent, CHOOSE_PHOTO);
-                    }
-                } else if ("删除".equals(charSequence)) {
-                    ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
-                    picUUID = null;
-                    if (housePhotoList.contains("删除")) {
-                        housePhotoList.remove("删除");
-                    }
-                }
+                }, 100);
             }
         })
                 .setCancelable(true, true)
@@ -368,7 +395,6 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    StyledDialog.buildLoading("请稍后").show();
                     //Todo 同时在Android/data/包名/cache/xBitmapCache下也缓存一张压缩过的（一长串数字.0），有何用？
                     picUUID = UUID.randomUUID().toString();
                     File compressedFile = BitmapUtil.saveBitmapToFile(file, pictures.getPath() + "/" + picUUID + ".jpg");
@@ -377,12 +403,10 @@ public class ModifyPropertyActivity extends AppCompatActivity {
                     if (!housePhotoList.contains("删除")) {
                         housePhotoList.add("删除");
                     }
-                    StyledDialog.dismissLoading();
                 }
                 break;
             case CHOOSE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    StyledDialog.buildLoading("请稍后").show();
                     // 判断手机系统版本号
                     if (Build.VERSION.SDK_INT >= 19) {
                         // 4.4及以上系统使用这个方法处理图片
@@ -396,8 +420,8 @@ public class ModifyPropertyActivity extends AppCompatActivity {
                     }
                     picUUID = UUID.randomUUID().toString();
                     //把imagePath所在的图片复制到Android/data/包名/files/Pictures目录下并更名为pictures.getPath() + "/" + picUUID + ".jpg"
-                    copyFile(imagePath, pictures.getPath() + "/" + picUUID + ".jpg");
-                    StyledDialog.dismissLoading();
+                    copyFile(imagePath, pictures.getPath() + File.separator + picUUID + ".jpg");
+
                 }
                 break;
             default:
@@ -510,7 +534,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View view = getCurrentFocus();
-            if (EditTextUtils.isShouldHideInput(view, ev)) {
+            if (EditTextUtil.isShouldHideInput(view, ev)) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

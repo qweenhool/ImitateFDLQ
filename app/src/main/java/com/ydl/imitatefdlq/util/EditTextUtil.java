@@ -11,7 +11,7 @@ import android.widget.EditText;
  * Created by qweenhool on 2017/8/10.
  */
 
-public class EditTextUtils {
+public class EditTextUtil {
     public static void clearButtonListener(final EditText et, final View view) {
         // 取得et中的文字
         String etInputString = et.getText().toString();
