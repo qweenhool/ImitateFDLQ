@@ -19,13 +19,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -48,11 +43,11 @@ import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
+import com.ydl.imitatefdlq.ui.base.BaseActivity;
 import com.ydl.imitatefdlq.util.BitmapUtil;
 import com.ydl.imitatefdlq.util.CacheTask;
 import com.ydl.imitatefdlq.util.EditTextUtil;
 import com.ydl.imitatefdlq.util.LruCacheUtil;
-import com.ydl.imitatefdlq.util.StatusBarCompat;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
 import java.io.File;
@@ -66,15 +61,10 @@ import java.util.List;
 import java.util.UUID;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ModifyHouseActivity extends AppCompatActivity {
+public class ModifyHouseActivity extends BaseActivity {
 
-    @BindView(R.id.tv_toolbar_name)
-    TextView tvToolbarName;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.et_house_name)
     EditText etHouseName;
     @BindView(R.id.iv_clear)
@@ -118,19 +108,79 @@ public class ModifyHouseActivity extends AppCompatActivity {
     private List<PictureBean> pictureBeanList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_modify_house);
-        ButterKnife.bind(this);
+    protected int getContentView() {
+        return R.layout.activity_modify_house;
+    }
 
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
+    @Override
+    protected void init(Bundle savedInstanceState) {
+
         EditTextUtil.clearButtonListener(etHouseName, ivClear);
-
-        initToolbar();
 
         initData();
 
         initOptionPicker();
+
+        setTitle("修改房产");
+
+        setTopLeftButton(R.drawable.back, new OnClickListener() {
+            @Override
+            public void onClick() {
+                finish();
+            }
+        });
+
+        setTopRightButton("保存", 0, new OnClickListener() {
+            @Override
+            public void onClick() {
+                if (TextUtils.isEmpty(etHouseName.getText().toString().trim())) {
+                    StyledDialog.buildIosAlert("提醒", "房产名不能为空", new MyDialogListener() {
+                        @Override
+                        public void onFirst() {
+
+                        }
+
+                        @Override
+                        public void onSecond() {
+
+                        }
+                    }).show();
+                } else {
+                    //Todo 点击保存，同步服务器
+
+                    //同步house表的内容
+                    HouseBean houseBean = houseBeanList.get(0);
+                    houseBean.setHouseName(etHouseName.getText().toString());
+                    houseBean.setHouseType(tvHouseType.getText().toString());
+                    houseBeanDao.update(houseBean);
+                    //同步picture表的内容
+                    List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                            .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
+                            .list();
+                    if (!optionList.contains("删除")) {//说明用户删除了房产照片
+                        if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
+                            pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//那么删除房产照片
+                        }
+                    } else if (picUUID != null) {//说明用户更换了房产照片
+                        if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
+                            pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//先删除旧的房产照片
+                        }
+                        //再把新的照片存进去
+                        PictureBean pictureBean = new PictureBean();
+                        pictureBean.setId(UUID.randomUUID().toString());
+                        pictureBean.setPath(pictures.getAbsolutePath() + "/" + picUUID + ".jpg");
+                        pictureBean.setForeignId(houseId);
+                        pictureBean.setOrderNumber(new Date());
+                        pictureBean.setDataUpload(0);
+                        pictureBean.setUploadUrl(null);//Todo 上传服务器地址
+                        pictureBean.setSortNo(0);
+                        pictureBeanDao.insert(pictureBean);
+                    }
+                    finish();
+
+                }
+            }
+        });
     }
 
 
@@ -200,24 +250,6 @@ public class ModifyHouseActivity extends AppCompatActivity {
 
             }
         }).show();
-    }
-
-    private void initToolbar() {
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("");
-        }
-        tvToolbarName.setText("修改房产");
-        toolbar.setNavigationIcon(R.drawable.back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
     }
 
     private void initData() {
@@ -291,63 +323,6 @@ public class ModifyHouseActivity extends AppCompatActivity {
                 .setLineSpacingMultiplier(1.8f)//滚轮间距设置（1.2-2.0倍，此为文字高度的间距倍数）
                 .build();
         opvHouseType.setPicker(Arrays.asList(houseTypeArr));
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_save, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (TextUtils.isEmpty(etHouseName.getText().toString().trim())) {
-            StyledDialog.buildIosAlert("提醒", "房产名不能为空", new MyDialogListener() {
-                @Override
-                public void onFirst() {
-
-                }
-
-                @Override
-                public void onSecond() {
-
-                }
-            }).show();
-        } else {
-            //Todo 点击保存，同步服务器
-
-            //同步house表的内容
-            HouseBean houseBean = houseBeanList.get(0);
-            houseBean.setHouseName(etHouseName.getText().toString());
-            houseBean.setHouseType(tvHouseType.getText().toString());
-            houseBeanDao.update(houseBean);
-            //同步picture表的内容
-            List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
-                    .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
-                    .list();
-            if (!optionList.contains("删除")) {//说明用户删除了房产照片
-                if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
-                    pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//那么删除房产照片
-                }
-            } else if (picUUID != null) {//说明用户更换了房产照片
-                if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
-                    pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//先删除旧的房产照片
-                }
-                //再把新的照片存进去
-                PictureBean pictureBean = new PictureBean();
-                pictureBean.setId(UUID.randomUUID().toString());
-                pictureBean.setPath(pictures.getAbsolutePath() + "/" + picUUID + ".jpg");
-                pictureBean.setForeignId(houseId);
-                pictureBean.setOrderNumber(new Date());
-                pictureBean.setDataUpload(0);
-                pictureBean.setUploadUrl(null);//Todo 上传服务器地址
-                pictureBean.setSortNo(0);
-                pictureBeanDao.insert(pictureBean);
-            }
-            finish();
-
-        }
-        return true;
     }
 
     private void initStyledDialog() {

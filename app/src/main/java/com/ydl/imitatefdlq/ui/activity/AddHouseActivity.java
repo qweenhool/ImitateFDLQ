@@ -20,13 +20,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -52,13 +47,13 @@ import com.ydl.imitatefdlq.entity.PictureBean;
 import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
+import com.ydl.imitatefdlq.ui.base.BaseActivity;
 import com.ydl.imitatefdlq.ui.fragment.AddRoomFragment;
 import com.ydl.imitatefdlq.ui.fragment.BatchAddRoomFragment;
 import com.ydl.imitatefdlq.util.BitmapUtil;
 import com.ydl.imitatefdlq.util.CacheTask;
 import com.ydl.imitatefdlq.util.DiskLruCacheUtil;
 import com.ydl.imitatefdlq.util.EditTextUtil;
-import com.ydl.imitatefdlq.util.StatusBarCompat;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,16 +66,10 @@ import java.util.List;
 import java.util.UUID;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddHouseActivity extends AppCompatActivity {
+public class AddHouseActivity extends BaseActivity {
 
-
-    @BindView(R.id.tv_toolbar_name)
-    TextView tvToolbarName;
-    @BindView(R.id.tb_add_house)
-    Toolbar tbAddHouse;
     @BindView(R.id.et_add_house_name)
     EditText etAddHouseName;
     @BindView(R.id.iv_clear)
@@ -128,22 +117,93 @@ public class AddHouseActivity extends AppCompatActivity {
     private PictureBean pictureBean;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_house);
-        ButterKnife.bind(this);
+    protected int getContentView() {
+        return R.layout.activity_add_house;
+    }
 
-        StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
+    @Override
+    protected void init(Bundle savedInstanceState) {
+
         EditTextUtil.clearButtonListener(etAddHouseName, ivClear);
 
         initData();
-
-        initToolbar();
         //构建条件选择器，此处为房产类型的选择
         initOptionPicker();
 
         initFragment(savedInstanceState);
 
+        setTitle("添加房产");
+
+        setTopLeftButton(R.drawable.back, new OnClickListener() {
+            @Override
+            public void onClick() {
+                finish();
+            }
+        });
+
+        setTopRightButton("保存", 0, new OnClickListener() {
+            @Override
+            public void onClick() {
+                if (TextUtils.isEmpty(etAddHouseName.getText().toString().trim())) {
+                    StyledDialog.buildIosAlert("提醒", "房产名不能为空", new MyDialogListener() {
+                        @Override
+                        public void onFirst() {
+                        }
+
+                        @Override
+                        public void onSecond() {
+                        }
+                    }).show();
+                } else {
+                    saveData();
+                    //来个ios样式的loading
+                    StyledDialog.buildLoading("请稍后").show();
+                    //Todo,此处应该同步服务器
+                    Intent roomNumberIntent = new Intent(AddHouseActivity.this, RoomNumberActivity.class);
+                    roomNumberIntent.putExtra("house_id", houseBean.getId());
+                    startActivity(roomNumberIntent);
+                    finish();
+                }
+            }
+        });
+
+    }
+
+    @OnClick({R.id.ll_house_type, R.id.ll_house_photo, R.id.ll_receive_account})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.ll_house_type:
+                opvHouseType.show();
+                break;
+            case R.id.ll_house_photo:
+                showStyledDialog();
+                break;
+            case R.id.ll_receive_account:
+                Intent accountIntent = new Intent(this, PayeeAccountActivity.class);
+                startActivity(accountIntent);
+                break;
+        }
+    }
+
+    @OnClick(R.id.cb_add_house_number)
+    public void onViewClicked() {
+        if (!isBatchAddRoom) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)//添加转换动画
+                    .show(batchAddRoomFragment)
+                    .hide(addRoomFragment)
+                    .commit();
+            isBatchAddRoom = true;
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                    .show(addRoomFragment)
+                    .hide(batchAddRoomFragment)
+                    .commit();
+            isBatchAddRoom = false;
+        }
     }
 
     private void initData() {
@@ -284,55 +344,6 @@ public class AddHouseActivity extends AppCompatActivity {
                 .setLineSpacingMultiplier(1.8f)//滚轮间距设置（1.2-2.0倍，此为文字高度的间距倍数）
                 .build();
         opvHouseType.setPicker(Arrays.asList(houseTypeArr));
-    }
-
-    private void initToolbar() {
-        setSupportActionBar(tbAddHouse);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("");
-        }
-        tvToolbarName.setText("添加房产");
-        tbAddHouse.setNavigationIcon(R.drawable.back);
-        tbAddHouse.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_save, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (TextUtils.isEmpty(etAddHouseName.getText().toString().trim())) {
-            StyledDialog.buildIosAlert("提醒", "房产名不能为空", new MyDialogListener() {
-                @Override
-                public void onFirst() {
-                }
-
-                @Override
-                public void onSecond() {
-                }
-            }).show();
-        } else {
-            saveData();
-            //来个ios样式的loading
-            StyledDialog.buildLoading("请稍后").show();
-            //Todo,此处应该同步服务器
-            Intent roomNumberIntent = new Intent(this, RoomNumberActivity.class);
-            roomNumberIntent.putExtra("house_id", houseBean.getId());
-            startActivity(roomNumberIntent);
-            finish();
-        }
-        return true;
     }
 
     //将房产数据存到数据库中
@@ -509,43 +520,6 @@ public class AddHouseActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    @OnClick({R.id.ll_house_type, R.id.ll_house_photo, R.id.ll_receive_account})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.ll_house_type:
-                opvHouseType.show();
-                break;
-            case R.id.ll_house_photo:
-                showStyledDialog();
-                break;
-            case R.id.ll_receive_account:
-                Intent accountIntent = new Intent(this, PayeeAccountActivity.class);
-                startActivity(accountIntent);
-                break;
-        }
-    }
-
-    @OnClick(R.id.cb_add_house_number)
-    public void onViewClicked() {
-        if (!isBatchAddRoom) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)//添加转换动画
-                    .show(batchAddRoomFragment)
-                    .hide(addRoomFragment)
-                    .commit();
-            isBatchAddRoom = true;
-        } else {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                    .show(addRoomFragment)
-                    .hide(batchAddRoomFragment)
-                    .commit();
-            isBatchAddRoom = false;
         }
     }
 

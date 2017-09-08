@@ -8,26 +8,6 @@
     android:orientation="vertical"
     tools:context=".ui.activity.AddHouseActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/tb_add_house"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#5287E7"
-        app:theme="@style/ToolbarTheme">
-
-        <TextView
-            android:id="@+id/tv_toolbar_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textColor="#ffffff"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </android.support.v7.widget.Toolbar>
-
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

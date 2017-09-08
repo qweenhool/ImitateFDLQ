@@ -27,7 +27,7 @@ import static com.ydl.imitatefdlq.R.id.action_base;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private Unbinder mUnbinder;
+    private Unbinder unbinder;
     protected Toolbar toolbar;
     private FrameLayout container;
     private TextView textView;
@@ -61,7 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         LayoutInflater.from(BaseActivity.this).inflate(getContentView(), container);
         ActivityCollector.addActivity(this);
         //这句话要放到这里才不会出错
-        mUnbinder = ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         init(savedInstanceState);
     }
 
@@ -119,7 +119,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mUnbinder.unbind();
+        unbinder.unbind();
         ActivityCollector.removeActivity(this);
     }
 
