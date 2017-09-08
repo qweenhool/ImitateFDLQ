@@ -32,7 +32,7 @@ import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.ui.base.BaseActivity;
-import com.ydl.imitatefdlq.util.BitmapUtil;
+import com.ydl.imitatefdlq.util.LruCacheUtil;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
 import java.util.ArrayList;
@@ -107,104 +107,99 @@ public class RoomNumberActivity extends BaseActivity {
         pictureBeanDao = daoSession.getPictureBeanDao();
 
         houseId = getIntent().getStringExtra("house_id");
-
-        if (houseId != null) {//如果是从startActivity过来的
-            List<HouseBean> houseBeanList = houseBeanDao.queryBuilder()
-                    .where(HouseBeanDao.Properties.Id.eq(houseId))
-                    .list();
-            //设置房产名字
-            tvHouseName.setText(houseBeanList.get(0).getHouseName());
-            //设置房产类型
-            tvHouseType.setText(houseBeanList.get(0).getHouseType());
-            //设置房产照片
-            List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
-                    .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
-                    .list();
-            if (pictureBeanList.size() != 0) {
-                //TODO 先检查内存中有没有缓存
-                Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromPath(pictureBeanList.get(0).getPath(), 50, 50);
-                if (bitmap != null) {
-                    rivHousePhoto.setImageBitmap(bitmap);
-                }
-            } else {
-                rivHousePhoto.setImageResource(R.drawable.room_info);
-            }
-            //显示房间列表
-            roomBeanList = new ArrayList<>();
-            List<RoomBean> list = roomBeanDao.queryBuilder()
-                    .where(RoomBeanDao.Properties.HouseId.eq(houseId))
-                    .orderDesc(RoomBeanDao.Properties.OrderNumber)
-                    .list();
-            roomBeanList.addAll(list);
-            adapter = new RoomNumberAdapter(this, roomBeanList);
-            rvRoomNumber.setLayoutManager(new LinearLayoutManager(this));
-            rvRoomNumber.addItemDecoration(new DefaultItemDecoration(Color.parseColor("#d7d7db")));
-            rvRoomNumber.setAdapter(adapter);
-
-            //设置item的点击事件
-            rvRoomNumber.setSwipeItemClickListener(new SwipeItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    Intent intent = new Intent(RoomNumberActivity.this, RenterActivity.class);
-                    intent.putExtra("room_id", roomBeanList.get(position).getId());
-                    startActivity(intent);
-                }
-            });
-
-            // 设置删除菜单。
-            rvRoomNumber.setSwipeMenuCreator(new SwipeMenuCreator() {
-                @Override
-                public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int viewType) {
-                    SwipeMenuItem deleteItem = new SwipeMenuItem(RoomNumberActivity.this);
-                    // 各种文字和图标属性设置。
-                    deleteItem.setText("删除")
-                            .setHeight(MATCH_PARENT)
-                            .setWidth(250)
-                            .setTextSize(15)
-                            .setTextColor(Color.WHITE)
-                            .setBackgroundColor(Color.parseColor("#FE3B30"));
-                    rightMenu.addMenuItem(deleteItem); // 在Item右侧添加一个菜单。
-
-                }
-            });
-            //设置删除菜单监听器
-            rvRoomNumber.setSwipeMenuItemClickListener(new SwipeMenuItemClickListener() {
-                @Override
-                public void onItemClick(final SwipeMenuBridge menuBridge) {
-                    final int adapterPosition = menuBridge.getAdapterPosition();
-                    StyledDialog.buildIosAlert("删除确认",
-                            "您确定要删除" + roomBeanList.get(adapterPosition).getRoomName() + ",同时将删除其全部租客及账单",
-                            new MyDialogListener() {
-                                @Override
-                                public void onFirst() {
-                                    //Todo 联网删除服务器数据
-
-                                    //删除room表的这一行数据
-                                    // RecyclerView的Item的position。
-                                    roomBeanDao.deleteByKey(roomBeanList.get(adapterPosition).getId());
-                                    roomBeanList.remove(adapterPosition);
-                                    adapter.notifyDataSetChanged();
-                                    //Todo 同时删除房号配置、照片，以及删除租客及账单
-                                }
-
-                                @Override
-                                public void onSecond() {
-
-                                }
-                            }).show();
-                    menuBridge.closeMenu();
-                }
-            });
-
-            if (roomBeanList.size() != 0) {//有房间就显示列表
-                refreshLayoutRoomNumber.setVisibility(View.VISIBLE);
-                llHint.setVisibility(View.GONE);
-
-            } else {//没有就隐藏
-                refreshLayoutRoomNumber.setVisibility(View.GONE);
-                llHint.setVisibility(View.VISIBLE);
-            }
+        List<HouseBean> houseBeanList = houseBeanDao.queryBuilder()
+                .where(HouseBeanDao.Properties.Id.eq(houseId))
+                .list();
+        //设置房产名字
+        tvHouseName.setText(houseBeanList.get(0).getHouseName());
+        //设置房产类型
+        tvHouseType.setText(houseBeanList.get(0).getHouseType());
+        //设置房产照片
+        List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
+                .list();
+        if (pictureBeanList.size() != 0) {
+            Bitmap bitmap = LruCacheUtil.getInstance().getBitmapFromMemoryCache(pictureBeanList.get(0).getPath());
+            rivHousePhoto.setImageBitmap(bitmap);
+        } else {
+            rivHousePhoto.setImageResource(R.drawable.room_info);
         }
+        //显示房间列表
+        roomBeanList = new ArrayList<>();
+        List<RoomBean> list = roomBeanDao.queryBuilder()
+                .where(RoomBeanDao.Properties.HouseId.eq(houseId))
+                .orderDesc(RoomBeanDao.Properties.OrderNumber)
+                .list();
+        roomBeanList.addAll(list);
+        adapter = new RoomNumberAdapter(this, roomBeanList);
+        rvRoomNumber.setLayoutManager(new LinearLayoutManager(this));
+        rvRoomNumber.addItemDecoration(new DefaultItemDecoration(Color.parseColor("#d7d7db")));
+        rvRoomNumber.setAdapter(adapter);
+
+        //设置item的点击事件
+        rvRoomNumber.setSwipeItemClickListener(new SwipeItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(RoomNumberActivity.this, RenterActivity.class);
+                intent.putExtra("room_id", roomBeanList.get(position).getId());
+                startActivity(intent);
+            }
+        });
+
+        // 设置删除菜单。
+        rvRoomNumber.setSwipeMenuCreator(new SwipeMenuCreator() {
+            @Override
+            public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int viewType) {
+                SwipeMenuItem deleteItem = new SwipeMenuItem(RoomNumberActivity.this);
+                // 各种文字和图标属性设置。
+                deleteItem.setText("删除")
+                        .setHeight(MATCH_PARENT)
+                        .setWidth(250)
+                        .setTextSize(15)
+                        .setTextColor(Color.WHITE)
+                        .setBackgroundColor(Color.parseColor("#FE3B30"));
+                rightMenu.addMenuItem(deleteItem); // 在Item右侧添加一个菜单。
+
+            }
+        });
+        //设置删除菜单监听器
+        rvRoomNumber.setSwipeMenuItemClickListener(new SwipeMenuItemClickListener() {
+            @Override
+            public void onItemClick(final SwipeMenuBridge menuBridge) {
+                final int adapterPosition = menuBridge.getAdapterPosition();
+                StyledDialog.buildIosAlert("删除确认",
+                        "您确定要删除" + roomBeanList.get(adapterPosition).getRoomName() + ",同时将删除其全部租客及账单",
+                        new MyDialogListener() {
+                            @Override
+                            public void onFirst() {
+                                //Todo 联网删除服务器数据
+
+                                //删除room表的这一行数据
+                                // RecyclerView的Item的position。
+                                roomBeanDao.deleteByKey(roomBeanList.get(adapterPosition).getId());
+                                roomBeanList.remove(adapterPosition);
+                                adapter.notifyDataSetChanged();
+                                //Todo 同时删除房号配置、照片，以及删除租客及账单
+                            }
+
+                            @Override
+                            public void onSecond() {
+
+                            }
+                        }).show();
+                menuBridge.closeMenu();
+            }
+        });
+
+        if (roomBeanList.size() != 0) {//有房间就显示列表
+            refreshLayoutRoomNumber.setVisibility(View.VISIBLE);
+            llHint.setVisibility(View.GONE);
+
+        } else {//没有就隐藏
+            refreshLayoutRoomNumber.setVisibility(View.GONE);
+            llHint.setVisibility(View.VISIBLE);
+        }
+
 
     }
 
@@ -212,7 +207,7 @@ public class RoomNumberActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_edit:
-                Intent modifyPropertyIntent = new Intent(this, ModifyPropertyActivity.class);
+                Intent modifyPropertyIntent = new Intent(this, ModifyHouseActivity.class);
                 modifyPropertyIntent.putExtra("house_id", houseId);
                 startActivity(modifyPropertyIntent);
                 break;
@@ -227,6 +222,40 @@ public class RoomNumberActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //1.从修改房产页面返回
+        //设置房产照片
+        List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
+                .list();
+        if (pictureBeanList.size() != 0) {
+            Bitmap bitmap = LruCacheUtil.getInstance().getBitmapFromMemoryCache(pictureBeanList.get(0).getPath());
+            //直接从内存中获取
+            if (bitmap != null) {
+                rivHousePhoto.setImageBitmap(bitmap);
+            } else {
+                rivHousePhoto.setImageResource(R.drawable.room_info);
+            }
+        } else {
+            rivHousePhoto.setImageResource(R.drawable.room_info);
+        }
+
+        List<HouseBean> houseBeanList = houseBeanDao.queryBuilder()
+                .where(HouseBeanDao.Properties.Id.eq(houseId))
+                .list();
+        //设置房产名字
+        tvHouseName.setText(houseBeanList.get(0).getHouseName());
+        //设置房产类型
+        tvHouseType.setText(houseBeanList.get(0).getHouseType());
+
+        //2.从添加房号页面返回
+        if (roomBeanList.size() != 0) {
+            refreshLayoutRoomNumber.setVisibility(View.VISIBLE);
+            llHint.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
+        } else {
+            refreshLayoutRoomNumber.setVisibility(View.GONE);
+            llHint.setVisibility(View.VISIBLE);
+        }
 
     }
 

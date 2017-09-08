@@ -2,13 +2,17 @@ package com.ydl.imitatefdlq.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hss01248.dialog.StyledDialog;
+import com.jakewharton.disklrucache.DiskLruCache;
 import com.ydl.imitatefdlq.AppApplication;
 import com.ydl.imitatefdlq.R;
 import com.ydl.imitatefdlq.entity.DaoSession;
@@ -19,8 +23,15 @@ import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.util.BitmapUtil;
+import com.ydl.imitatefdlq.util.DiskLruCacheUtil;
+import com.ydl.imitatefdlq.util.LruCacheUtil;
+import com.ydl.imitatefdlq.util.MD5Encoder;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -32,6 +43,8 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
     private Context mContext;
     private List<HouseBean> mHouseBeanList;
     private LayoutInflater mInflater;
+
+    private DiskLruCache diskLruCache;
 
     //每一个对象代表一张表
     private HouseBeanDao houseBeanDao;
@@ -46,6 +59,8 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
         houseBeanDao = daoSession.getHouseBeanDao();
         roomBeanDao = daoSession.getRoomBeanDao();
         pictureBeanDao = daoSession.getPictureBeanDao();
+
+        diskLruCache = DiskLruCacheUtil.getDiskLruCache(context);
 
     }
 
@@ -63,9 +78,8 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
                 .where(PictureBeanDao.Properties.ForeignId.eq(mHouseBeanList.get(position).getId()))
                 .list();
         if (pictureBeanList.size() != 0) {//有房产照片的话就设置照片
-            //TODO 压缩图片
-            Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromPath(pictureBeanList.get(0).getPath(), 50, 50);
-            holder.housePhoto.setImageBitmap(bitmap);
+            String imageUrl = pictureBeanList.get(0).getPath();
+            showBitmap(holder.housePhoto, imageUrl);
         } else {
             holder.housePhoto.setImageResource(R.drawable.room_info);
         }
@@ -112,6 +126,101 @@ public class HousePropertyAdapter extends RecyclerView.Adapter<HousePropertyAdap
             idleRoomNumber = (TextView) itemView.findViewById(R.id.tv_idle_room_number);
             tvHouseInfo = (TextView) itemView.findViewById(R.id.tv_no_room_yet);
 
+        }
+    }
+
+    private void showBitmap(ImageView imageView, String imageUrl) {
+        try {
+            Bitmap bitmap = LruCacheUtil.getInstance().getBitmapFromMemoryCache(imageUrl);
+            if (bitmap == null) {//内存中没有从硬盘缓存读取
+                CacheTask task = new CacheTask(imageView);
+                task.execute(imageUrl);
+            } else {//内存中有就直接从内存读取
+                imageView.setImageBitmap(bitmap);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 将缓存记录同步到journal文件中。
+     */
+    public void flushCache() {
+        if (diskLruCache != null) {
+            try {
+                diskLruCache.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class CacheTask extends AsyncTask<String, Void, Bitmap> {
+
+        private ImageView imageView;
+
+        public CacheTask(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            String imageUrl = params[0];
+            FileInputStream fileInputStream = null;
+            FileDescriptor fileDescriptor = null;
+            DiskLruCache.Snapshot snapshot;
+            try {
+                // 生成图片URL对应的key
+                String key = MD5Encoder.encode(imageUrl);
+                snapshot = diskLruCache.get(key);
+                if (snapshot == null) {
+                    // 如果没有找到对应的缓存，则准备将imageUrl的图片写入缓存，默认缓存目录为xBitmapCache
+                    DiskLruCache.Editor editor = diskLruCache.edit(key);
+                    if (editor != null) {
+                        OutputStream outputStream = editor.newOutputStream(0);
+                        DiskLruCacheUtil.cacheFile(imageUrl, outputStream);
+                        editor.commit();
+                    }
+                    snapshot = diskLruCache.get(key);
+                }
+                if (snapshot != null) {
+                    fileInputStream = (FileInputStream) snapshot.getInputStream(0);
+                    fileDescriptor = fileInputStream.getFD();
+                }
+                // 将缓存数据解析成Bitmap对象
+                Bitmap bitmap = null;
+                if (fileInputStream != null) {
+                    bitmap = BitmapUtil.decodeSampledBitmapFromFD(fileDescriptor, 50, 50);
+                }
+                if (bitmap != null) {
+                    // 将Bitmap对象添加到内存缓存当中
+                    LruCacheUtil.getInstance().addBitmapToMemoryCache(imageUrl, bitmap);
+                }
+                return bitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (fileDescriptor == null && fileInputStream != null) {
+                    try {
+                        fileInputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if(bitmap!=null){
+                imageView.setImageBitmap(bitmap);
+            }else {
+                imageView.setImageResource(R.drawable.room_info);
+            }
+            StyledDialog.dismissLoading();
         }
     }
 }

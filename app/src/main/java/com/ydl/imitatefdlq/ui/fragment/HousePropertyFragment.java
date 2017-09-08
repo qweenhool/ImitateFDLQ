@@ -198,47 +198,47 @@ public class HousePropertyFragment extends Fragment {
                     StyledDialog.buildIosAlert("删除确认",
                             "删除房产将一并删除其所有的房号,租客及账单，您确定要删除吗?",
                             new MyDialogListener() {
-                        @Override
-                        public void onFirst() {
-                            //Todo 联网删除服务器数据
+                                @Override
+                                public void onFirst() {
+                                    //Todo 联网删除服务器数据
 
-                            //删除house表中这一行数据
-                            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-                            houseBeanDao.deleteByKey(houseBeanList.get(adapterPosition).getId());
-                            //删除picture表中这一行数据
-                            List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
-                                    .where(PictureBeanDao.Properties.ForeignId.
-                                            eq(houseBeanList.get(adapterPosition).getId()))
-                                    .list();
-                            if (pictureBeanList.size() != 0) {
-                                pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());
-                            }
-                            //删除room表中跟房间id相关的房号
-                            List<RoomBean> roomBeanList = roomBeanDao.queryBuilder()
-                                    .where(RoomBeanDao.Properties.HouseId.
-                                            eq(houseBeanList.get(adapterPosition).getId()))
-                                    .list();
-                            if (roomBeanList.size() != 0) {
-                                for (int i = 0; i < roomBeanList.size(); i++) {
-                                    roomBeanDao.deleteByKey(roomBeanList.get(i).getId());
+                                    //删除house表中这一行数据
+                                    int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
+                                    houseBeanDao.deleteByKey(houseBeanList.get(adapterPosition).getId());
+                                    //删除picture表中这一行数据
+                                    List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                                            .where(PictureBeanDao.Properties.ForeignId.
+                                                    eq(houseBeanList.get(adapterPosition).getId()))
+                                            .list();
+                                    if (pictureBeanList.size() != 0) {
+                                        pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());
+                                    }
+                                    //删除room表中跟房间id相关的房号
+                                    List<RoomBean> roomBeanList = roomBeanDao.queryBuilder()
+                                            .where(RoomBeanDao.Properties.HouseId.
+                                                    eq(houseBeanList.get(adapterPosition).getId()))
+                                            .list();
+                                    if (roomBeanList.size() != 0) {
+                                        for (int i = 0; i < roomBeanList.size(); i++) {
+                                            roomBeanDao.deleteByKey(roomBeanList.get(i).getId());
+                                        }
+                                    }
+                                    //更新传入adapter的数据集
+                                    houseBeanList.remove(adapterPosition);
+                                    //houseBeanList里面没有数据就显示初始界面
+                                    if (houseBeanList.size() == 0) {
+                                        llHouseList.setVisibility(View.GONE);
+                                        ivBg.setVisibility(View.VISIBLE);
+                                        llAddHouseButtonBelow.setVisibility(View.VISIBLE);
+                                    }
+                                    adapter.notifyDataSetChanged();
                                 }
-                            }
-                            //更新传入adapter的数据集
-                            houseBeanList.remove(adapterPosition);
-                            //houseBeanList里面没有数据就显示初始界面
-                            if (houseBeanList.size() == 0) {
-                                llHouseList.setVisibility(View.GONE);
-                                ivBg.setVisibility(View.VISIBLE);
-                                llAddHouseButtonBelow.setVisibility(View.VISIBLE);
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
 
-                        @Override
-                        public void onSecond() {
+                                @Override
+                                public void onSecond() {
 
-                        }
-                    }).show();
+                                }
+                            }).show();
                     menuBridge.closeMenu();
                 }
             });
@@ -268,6 +268,9 @@ public class HousePropertyFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        if (adapter != null) {
+            adapter.flushCache();
+        }
         Log.e("HousePropertyFragment", "onPause-----");
     }
 

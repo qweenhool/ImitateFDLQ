@@ -57,7 +57,7 @@
             android:name=".ui.activity.RoomNumberActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.ModifyPropertyActivity"
+            android:name=".ui.activity.ModifyHouseActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.AddRoomNumberActivity"

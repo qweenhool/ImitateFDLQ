@@ -12,7 +12,9 @@ public class LruCacheUtil {
     // private HashMap<String,Bitmap> mMemoryCache=new HashMap<>();//1.因为强引用,容易造成内存溢出，所以考虑使用下面弱引用的方法
     // private HashMap<String, SoftReference<Bitmap>> mMemoryCache = new HashMap<>();//2.因为在Android2.3+后,系统会优先考虑回收弱引用对象,官方提出使用LruCache
 
-    private LruCache<String, Bitmap> mMemoryCache;
+    private static LruCacheUtil instance;
+
+    private static LruCache<String, Bitmap> mMemoryCache;
 
     public LruCacheUtil() {
 
@@ -29,12 +31,23 @@ public class LruCacheUtil {
 
     }
 
+    public static LruCacheUtil getInstance() {
+        if (instance == null) {
+            synchronized (LruCacheUtil.class) {
+                if (instance == null) {
+                    instance = new LruCacheUtil();
+                }
+            }
+        }
+        return instance;
+    }
+
     /**
      * 从内存中读图片
      *
      * @param key LruCache的键，这里传入图片的URL地址。
      */
-    public Bitmap getBitmapFromMemory(String key) {
+    public Bitmap getBitmapFromMemoryCache(String key) {
 
         //Bitmap bitmap = mMemoryCache.get(key);//1.强引用方法
             /*2.弱引用方法
@@ -51,14 +64,16 @@ public class LruCacheUtil {
     /**
      * 往内存中写图片
      *
-     * @param key LruCache的键，这里传入图片的URL地址。
+     * @param key    LruCache的键，这里传入图片的URL地址。
      * @param bitmap
      */
-    public void setBitmapToMemory(String key, Bitmap bitmap) {
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         //mMemoryCache.put(key, bitmap);//1.强引用方法
             /*2.弱引用方法
             mMemoryCache.put(key, new SoftReference<>(bitmap));
             */
-        mMemoryCache.put(key, bitmap);
+        if (getBitmapFromMemoryCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
     }
 }

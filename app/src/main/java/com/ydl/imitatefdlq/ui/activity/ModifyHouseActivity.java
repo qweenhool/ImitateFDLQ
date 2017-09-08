@@ -49,7 +49,9 @@ import com.ydl.imitatefdlq.entity.PictureBeanDao;
 import com.ydl.imitatefdlq.entity.RoomBean;
 import com.ydl.imitatefdlq.entity.RoomBeanDao;
 import com.ydl.imitatefdlq.util.BitmapUtil;
+import com.ydl.imitatefdlq.util.CacheTask;
 import com.ydl.imitatefdlq.util.EditTextUtil;
+import com.ydl.imitatefdlq.util.LruCacheUtil;
 import com.ydl.imitatefdlq.util.StatusBarCompat;
 import com.ydl.imitatefdlq.widget.RoundImageView;
 
@@ -57,7 +59,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -68,7 +69,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ModifyPropertyActivity extends AppCompatActivity {
+public class ModifyHouseActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_toolbar_name)
     TextView tvToolbarName;
@@ -100,13 +101,13 @@ public class ModifyPropertyActivity extends AppCompatActivity {
 
     private String[] houseTypeArr;
     private OptionsPickerView opvHouseType;
-    private List<String> housePhotoList;
-    private File pictures;
-    private File file;
-    private Uri imageUri;
-    private String picUUID;
-    private String imagePath;
-    private String houseId;
+    private List<String> optionList;//选择照片获取方式
+    private File pictures;//Pictures目录
+    private File file;//fdlq.jpg
+    private Uri imageUri;//拍照返回的uri
+    private String imagePath;//选取相册照片后返回的照片路径
+    private String picUUID;//缓存图片的名称
+    private String houseId;//房间id
 
     //每一个对象代表一张表
     private HouseBeanDao houseBeanDao;
@@ -119,7 +120,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_modify_property);
+        setContentView(R.layout.activity_modify_house);
         ButterKnife.bind(this);
 
         StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorStatusBar));
@@ -188,7 +189,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
                         }
                     }
                 }
-                Intent intent = new Intent(ModifyPropertyActivity.this, MainActivity.class);
+                Intent intent = new Intent(ModifyHouseActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("home_property", "home_property");
                 startActivity(intent);
@@ -220,7 +221,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        housePhotoList = new ArrayList<>();
+        optionList = new ArrayList<>();
         pictures = new File(getExternalFilesDir(null).getPath() + "/Pictures");
         //原始照片，初始化imageUri
         file = new File(pictures, "fdlq.jpg");
@@ -233,7 +234,7 @@ public class ModifyPropertyActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         if (Build.VERSION.SDK_INT >= 24) {
-            imageUri = FileProvider.getUriForFile(ModifyPropertyActivity.this,
+            imageUri = FileProvider.getUriForFile(ModifyHouseActivity.this,
                     "com.ydl.imitatefdlq.fileprovider", file);
         } else {
             imageUri = Uri.fromFile(file);
@@ -260,15 +261,19 @@ public class ModifyPropertyActivity extends AppCompatActivity {
                 .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
                 .list();
         if (pictureBeanList.size() != 0) {
-            //TODO 压缩后显示
-            ivHousePhoto.setImageURI(Uri.parse(pictureBeanList.get(0).getPath()));
-            housePhotoList.add("拍照");
-            housePhotoList.add("从手机相册选择");
-            housePhotoList.add("删除");
+            Bitmap bitmap = LruCacheUtil.getInstance().getBitmapFromMemoryCache(pictureBeanList.get(0).getPath());
+            if (bitmap == null) {//内存中没有缓存
+                ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
+            } else {//内存中有缓存
+                ivHousePhoto.setImageBitmap(bitmap);
+            }
+            optionList.add("拍照");
+            optionList.add("从手机相册选择");
+            optionList.add("删除");
         } else {
             ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
-            housePhotoList.add("拍照");
-            housePhotoList.add("从手机相册选择");
+            optionList.add("拍照");
+            optionList.add("从手机相册选择");
         }
         //Todo 获取收款账户
     }
@@ -296,90 +301,94 @@ public class ModifyPropertyActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_save) {
-            if (TextUtils.isEmpty(etHouseName.getText().toString().trim())) {
-                StyledDialog.buildIosAlert("提醒", "房产名不能为空", new MyDialogListener() {
-                    @Override
-                    public void onFirst() {
+        if (TextUtils.isEmpty(etHouseName.getText().toString().trim())) {
+            StyledDialog.buildIosAlert("提醒", "房产名不能为空", new MyDialogListener() {
+                @Override
+                public void onFirst() {
 
-                    }
-
-                    @Override
-                    public void onSecond() {
-
-                    }
-                }).show();
-            } else {
-                //Todo 点击保存，同步服务器
-
-                //同步house表的内容
-                HouseBean houseBean = houseBeanList.get(0);
-                houseBean.setHouseName(etHouseName.getText().toString());
-                houseBean.setHouseType(tvHouseType.getText().toString());
-                houseBeanDao.update(houseBean);
-                //同步picture表的内容
-                List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
-                        .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
-                        .list();
-                if (!housePhotoList.contains("删除")) {//说明用户删除了房产照片
-                    if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
-                        pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//那么删除房产照片
-                    }
-                } else if (picUUID != null) {//说明用户更换了房产照片
-                    if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
-                        pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//先删除旧的房产照片
-                    }
-                    //再把新的照片存进去
-                    PictureBean pictureBean = new PictureBean();
-                    pictureBean.setId(UUID.randomUUID().toString());
-                    pictureBean.setPath(pictures.getAbsolutePath() + "/" + picUUID + ".jpg");
-                    pictureBean.setForeignId(houseId);
-                    pictureBean.setOrderNumber(new Date());
-                    pictureBean.setDataUpload(0);
-                    pictureBean.setUploadUrl(null);//Todo 上传服务器地址
-                    pictureBean.setSortNo(0);
-                    pictureBeanDao.insert(pictureBean);
                 }
-                finish();
 
+                @Override
+                public void onSecond() {
+
+                }
+            }).show();
+        } else {
+            //Todo 点击保存，同步服务器
+
+            //同步house表的内容
+            HouseBean houseBean = houseBeanList.get(0);
+            houseBean.setHouseName(etHouseName.getText().toString());
+            houseBean.setHouseType(tvHouseType.getText().toString());
+            houseBeanDao.update(houseBean);
+            //同步picture表的内容
+            List<PictureBean> pictureBeanList = pictureBeanDao.queryBuilder()
+                    .where(PictureBeanDao.Properties.ForeignId.eq(houseId))
+                    .list();
+            if (!optionList.contains("删除")) {//说明用户删除了房产照片
+                if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
+                    pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//那么删除房产照片
+                }
+            } else if (picUUID != null) {//说明用户更换了房产照片
+                if (pictureBeanList.size() != 0) {//如果picture表中原来就有房产照片
+                    pictureBeanDao.deleteByKey(pictureBeanList.get(0).getId());//先删除旧的房产照片
+                }
+                //再把新的照片存进去
+                PictureBean pictureBean = new PictureBean();
+                pictureBean.setId(UUID.randomUUID().toString());
+                pictureBean.setPath(pictures.getAbsolutePath() + "/" + picUUID + ".jpg");
+                pictureBean.setForeignId(houseId);
+                pictureBean.setOrderNumber(new Date());
+                pictureBean.setDataUpload(0);
+                pictureBean.setUploadUrl(null);//Todo 上传服务器地址
+                pictureBean.setSortNo(0);
+                pictureBeanDao.insert(pictureBean);
             }
+            finish();
+
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private void initStyledDialog() {
-        StyledDialog.buildIosSingleChoose(housePhotoList, new MyItemDialogListener() {
+        StyledDialog.buildIosSingleChoose(optionList, new MyItemDialogListener() {
             @Override
             public void onItemClick(final CharSequence charSequence, int i) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if ("拍照".equals(charSequence)) {
-                            if (ContextCompat.checkSelfPermission(ModifyPropertyActivity.this,
-                                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
-                                ActivityCompat.requestPermissions(ModifyPropertyActivity.this,
-                                        new String[]{Manifest.permission.CAMERA}, 1);
-                            } else {//同意拍照就打开摄像头
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                                startActivityForResult(intent, TAKE_PHOTO);
-                            }
-                        } else if ("从手机相册选择".equals(charSequence)) {
-                            if (ContextCompat.checkSelfPermission(ModifyPropertyActivity.this,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
-                                ActivityCompat.requestPermissions(ModifyPropertyActivity.this,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                            } else {//同意就打开相册
-                                Intent intent = new Intent("android.intent.action.GET_CONTENT");
-                                intent.setType("image/*");
-                                startActivityForResult(intent, CHOOSE_PHOTO);
-                            }
-                        } else if ("删除".equals(charSequence)) {
-                            ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
-                            picUUID = null;
-                            if (housePhotoList.contains("删除")) {
-                                housePhotoList.remove("删除");
-                            }
+                        switch (charSequence.toString()) {
+                            case "拍照":
+                                if (ContextCompat.checkSelfPermission(ModifyHouseActivity.this,
+                                        Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                                    ActivityCompat.requestPermissions(ModifyHouseActivity.this,
+                                            new String[]{Manifest.permission.CAMERA}, 1);
+                                } else {//同意拍照就打开摄像头
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                    startActivityForResult(intent, TAKE_PHOTO);
+                                }
+                                break;
+                            case "从手机相册选择":
+                                if (ContextCompat.checkSelfPermission(ModifyHouseActivity.this,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {//不同意就弹权限框
+                                    ActivityCompat.requestPermissions(ModifyHouseActivity.this,
+                                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                                } else {//同意就打开相册
+                                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                                    intent.setType("image/*");
+                                    startActivityForResult(intent, CHOOSE_PHOTO);
+                                }
+                                break;
+                            case "删除":
+                                ivHousePhoto.setImageResource(R.drawable.ic_add_photo);
+                                picUUID = null;
+                                if (optionList.contains("删除")) {
+                                    optionList.remove("删除");
+                                }
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }, 100);
@@ -395,13 +404,18 @@ public class ModifyPropertyActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    //Todo 同时在Android/data/包名/cache/xBitmapCache下也缓存一张压缩过的（一长串数字.0），有何用？
+                    StyledDialog.buildLoading("请稍后").show();
+                    //1.Picture下生成拍照原图fdlq.jpg (默认生成)，imageUri和file都包含这张图片的地址信息
+                    //2.压缩拍照原图fdlq.jpg，长宽像素都为原来的一半，并生成uuid.jpg
                     picUUID = UUID.randomUUID().toString();
-                    File compressedFile = BitmapUtil.saveBitmapToFile(file, pictures.getPath() + "/" + picUUID + ".jpg");
-                    Bitmap bitmap = BitmapFactory.decodeFile(compressedFile.getAbsolutePath());
-                    ivHousePhoto.setImageBitmap(bitmap);
-                    if (!housePhotoList.contains("删除")) {
-                        housePhotoList.add("删除");
+                    File file = BitmapUtil.saveBitmapToFile(this.file, pictures.getPath() + "/" + picUUID + ".jpg");
+                    //3.xBitmapCache缓存一张,名字为MD5Encoder.encode(uuid)。同时在内存中也缓存一张
+                    //4.将拍照后的图片设置到imageView
+                    new CacheTask(ModifyHouseActivity.this, ivHousePhoto, R.drawable.ic_add_photo)
+                            .execute(file.getAbsolutePath());
+
+                    if (!optionList.contains("删除")) {
+                        optionList.add("删除");
                     }
                 }
                 break;
@@ -415,13 +429,17 @@ public class ModifyPropertyActivity extends AppCompatActivity {
                         // 4.4以下系统使用这个方法处理图片
                         handleImageBeforeKitKat(data);
                     }
-                    if (!housePhotoList.contains("删除")) {
-                        housePhotoList.add("删除");
+                    if (!optionList.contains("删除")) {
+                        optionList.add("删除");
                     }
                     picUUID = UUID.randomUUID().toString();
-                    //把imagePath所在的图片复制到Android/data/包名/files/Pictures目录下并更名为pictures.getPath() + "/" + picUUID + ".jpg"
-                    copyFile(imagePath, pictures.getPath() + File.separator + picUUID + ".jpg");
-
+                    //1.Picture下缓存一张
+                    String cachePath = pictures.getPath() + File.separator + picUUID + ".jpg";
+                    copyFile(imagePath, cachePath);
+                    //2.xBitmapCache缓存一张,名字为MD5Encoder.encode(uuid)。同时在内存中也缓存一张
+                    //3.将拍照后的图片设置到imageView
+                    new CacheTask(ModifyHouseActivity.this, ivHousePhoto, R.drawable.ic_add_photo)
+                            .execute(cachePath);
                 }
                 break;
             default:
@@ -484,25 +502,30 @@ public class ModifyPropertyActivity extends AppCompatActivity {
     }
 
     public void copyFile(String srcPath, String desPath) {
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
         try {
-            int byteSum = 0;
-            int byteRead = 0;
-            File srcFile = new File(srcPath);
-            if (srcFile.exists()) { //文件存在时
-                InputStream inStream = new FileInputStream(srcPath); //读入原文件,读入到代码中
-                FileOutputStream fs = new FileOutputStream(desPath);
-                byte[] buffer = new byte[1444];
-                while ((byteRead = inStream.read(buffer)) != -1) {
-                    byteSum += byteRead; //字节数 文件大小
-                    fs.write(buffer, 0, byteRead);
-                }
-                inStream.close();
+            fis = new FileInputStream(srcPath);
+            fos = new FileOutputStream(desPath);
+            byte[] b = new byte[1024];
+            int len;
+            while ((len = fis.read(b)) != -1) {
+                fos.write(b, 0, len);
             }
         } catch (Exception e) {
             e.printStackTrace();
-
+        } finally {
+            try {
+                if (fos != null) {//先关闭
+                    fos.close();
+                }
+                if (fis != null) {
+                    fis.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     @Override
