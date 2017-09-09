@@ -7,10 +7,11 @@ import android.os.Environment;
 
 import com.jakewharton.disklrucache.DiskLruCache;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -56,29 +57,34 @@ public class DiskLruCacheUtil {
         return new File(cachePath + File.separator + uniqueName);
     }
 
-    /**
-     * 将srcPath的文件写入到outputStream中
-     *
-     * @param srcPath
-     * @param outputStream
-     */
-    public static void cacheFile(String srcPath, OutputStream outputStream) {
+    public static void cacheFile(String srcPath, OutputStream out) {
+        FileInputStream fis = null;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
         try {
-            int byteSum = 0;
-            int byteRead = 0;
-            File srcFile = new File(srcPath);
-            if (srcFile.exists()) { //文件存在时
-                InputStream inStream = new FileInputStream(srcPath); //读入原文件,读入到代码中
-                byte[] buffer = new byte[1444];
-                while ((byteRead = inStream.read(buffer)) != -1) {
-                    byteSum += byteRead; //字节数 文件大小
-                    outputStream.write(buffer, 0, byteRead);
-                }
-                inStream.close();
+            fis = new FileInputStream(srcPath);
+            bis = new BufferedInputStream(fis, 8 * 1024);
+            bos = new BufferedOutputStream(out, 8 * 1024);
+            int len;
+            while ((len = bis.read()) != -1) {
+                bos.write(len);
             }
         } catch (Exception e) {
             e.printStackTrace();
-
+        } finally {
+            try {
+                if (bos != null) {//先关闭
+                    bos.close();
+                }
+                if (bis != null) {
+                    bis.close();
+                }
+                if (fis != null) {
+                    fis.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

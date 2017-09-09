@@ -379,7 +379,7 @@ public class ModifyHouseActivity extends BaseActivity {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    StyledDialog.buildLoading("请稍后").show();
+                    StyledDialog.buildLoading("请稍后").setCancelable(false, false).show();
                     //1.Picture下生成拍照原图fdlq.jpg (默认生成)，imageUri和file都包含这张图片的地址信息
                     //2.压缩拍照原图fdlq.jpg，长宽像素都为原来的一半，并生成uuid.jpg
                     picUUID = UUID.randomUUID().toString();
@@ -396,6 +396,7 @@ public class ModifyHouseActivity extends BaseActivity {
                 break;
             case CHOOSE_PHOTO:
                 if (resultCode == RESULT_OK) {
+                    StyledDialog.buildLoading("请稍后").setCancelable(false, false).show();
                     // 判断手机系统版本号
                     if (Build.VERSION.SDK_INT >= 19) {
                         // 4.4及以上系统使用这个方法处理图片
